@@ -12,6 +12,8 @@ public class UpdateProfileRequestDto {
 
     private String password;
 
+    private String newPassword;
+
     @NotBlank(message = "공백은 사용할 수 없습니다.")
     private String username;
 

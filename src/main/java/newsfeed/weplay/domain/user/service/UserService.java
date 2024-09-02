@@ -72,10 +72,24 @@ public class UserService {
     public void updateUserProfile(Long userId, UpdateProfileRequestDto requestDto) {
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
+        String newPassword = requestDto.getNewPassword();
         String username = requestDto.getUsername();
         String imgUrl = requestDto.getImgUrl();
         String location = requestDto.getLocation();
         Integer age = requestDto.getAge();
+
+        // 기존 유저 엔티티 가져오기
+        User findUser = findUserById(userId);
+
+        // 현재 비밀번호가 일치하지 않는 경우
+        if(!passwordEncoder.matches(newPassword, findUser.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 틀립니다.");
+        }
+
+        // 현재 비밀번호와 바꿀 비밀번호가 일치하는 경우
+        if(passwordEncoder.matches(newPassword, password)) {
+            throw new IllegalArgumentException("현재 비밀번호와 변경할 비밀번호가 같지 않아야 합니다.");
+        }
 
         // 닉네임 중복 체크
         Optional<User> checkUsername = userRepository.findByUsername(username);
@@ -88,9 +102,6 @@ public class UserService {
         if(checkEmail.isPresent()) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
-
-        // 기존 유저 엔티티 가져오기
-        User findUser = findUserById(userId);
 
         // 새로운 정보로 유저 생성
         User user = new User(username, email, password, imgUrl, location, age);
