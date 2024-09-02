@@ -1,6 +1,7 @@
 package newsfeed.weplay.domain.user.controller;
 
 import jakarta.validation.Valid;
+import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
 import newsfeed.weplay.domain.user.dto.request.LoginRequestDto;
 import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
@@ -44,8 +45,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{user_id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long user_id) {
-        userService.deleteUser(user_id);
+    public ResponseEntity<String> deleteUser(@PathVariable Long user_id, @RequestBody DeleteUserRequestDto requestDto) {
+        userService.deleteUser(user_id, requestDto);
         return new ResponseEntity<>("delete success", HttpStatus.OK);
     }
 }

@@ -32,8 +32,11 @@ public class User {
     @Column(name = "location")
     private String location;
 
-    @Column(name = "imgUrl")
+    @Column(name = "img_url")
     private String imgUrl;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     public User(String username, String email, String password, String imgUrl, String location, Integer age) {
         this.username = username;
@@ -44,7 +47,6 @@ public class User {
         this.age = age;
     }
 
-
     public void update(User user) {
         this.username = user.getUsername();
         this.email = user.getEmail();
@@ -52,5 +54,13 @@ public class User {
         this.imgUrl = user.getImgUrl();
         this.location = user.getLocation();
         this.age = user.getAge();
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

@@ -1,12 +1,14 @@
 package newsfeed.weplay.domain.user.service;
 
 import newsfeed.weplay.domain.config.PasswordEncoder;
+import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
 import newsfeed.weplay.domain.user.dto.request.LoginRequestDto;
 import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
 import newsfeed.weplay.domain.user.dto.response.UserResponseDto;
 import newsfeed.weplay.domain.user.entity.User;
 import newsfeed.weplay.domain.user.repository.UserRepository;
+import org.hibernate.sql.Delete;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,8 +112,28 @@ public class UserService {
         findUser.update(user);
     }
 
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId, DeleteUserRequestDto requestDto) {
+        String email = requestDto.getEmail();
+        String password = requestDto.getPassword();
         User user = findUserById(userId);
-        userRepository.delete(user);
+
+        // 유저가 이미 탈퇴했는지 확인
+        if(user.isDeleted()) {
+            throw new IllegalArgumentException("이미 탈퇴한 유저입니다.");
+        }
+
+        // 이메일 일치 확인
+        if(user.getEmail().equals(email)) {
+            throw new IllegalArgumentException("이메일이 일치하지 않습니다.");
+        }
+
+        // 비밀번호 일치 확인
+        if(!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        user.setDeleted(true);
+
+        userRepository.save(user);
     }
 }
