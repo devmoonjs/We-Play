@@ -1,11 +1,10 @@
 package newsfeed.weplay.domain.post.service;
 
-import newsfeed.weplay.domain.auth.dto.AuthUser;
+import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.post.entity.Post;
-import newsfeed.weplay.domain.user.entity.User;
 import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,16 +16,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-    }
 
     // 뉴스피드 조회 (모든 게시물을 최신순으로 조회)
     public Page<PostResponseDto> getNewsFeed(int page, int size) {
@@ -43,10 +37,8 @@ public class PostService {
         return postRepository.findById(id).map(this::convertToResponseDto);
     }
 
-    public PostResponseDto createPost(AuthUser authUser, PostRequestDto postRequestDto) {
-        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
+    public PostResponseDto createPost(PostRequestDto postRequestDto) {
         Post post = convertToEntity(postRequestDto);
-        post.setUser(user);
         Post createdPost = postRepository.save(post);
         return convertToResponseDto(createdPost);
     }
