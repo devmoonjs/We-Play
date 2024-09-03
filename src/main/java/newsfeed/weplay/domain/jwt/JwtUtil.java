@@ -47,7 +47,7 @@ public class JwtUtil {
                 Jwts.builder()
                         .setSubject(userName) // 사용자 식별값
                         .claim("email", email)
-                        .claim("userId", String.valueOf(userId))
+                        .claim("userId", userId)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
