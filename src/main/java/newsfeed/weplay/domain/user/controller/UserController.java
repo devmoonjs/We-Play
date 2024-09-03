@@ -1,6 +1,8 @@
 package newsfeed.weplay.domain.user.controller;
 
 import jakarta.validation.Valid;
+import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
 import newsfeed.weplay.domain.user.dto.request.LoginRequestDto;
@@ -20,21 +22,21 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<UserResponseDto> getUserProfile(@PathVariable Long user_id) {
-        return new ResponseEntity<>(userService.getUser(user_id), HttpStatus.OK);
+    @GetMapping("/")
+    public ResponseEntity<UserResponseDto> getUserProfile(@Auth AuthUser authUser) {
+        return new ResponseEntity<>(userService.getUser(authUser), HttpStatus.OK);
     }
 
-    @PutMapping("/{user_id}")
-    public ResponseEntity<String> updateUserProfile(@PathVariable Long user_id,
+    @PutMapping("/")
+    public ResponseEntity<String> updateUserProfile(@Auth AuthUser authUser,
                                                     @Valid @RequestBody UpdateProfileRequestDto requestDto) {
-        userService.updateUserProfile(user_id, requestDto);
+        userService.updateUserProfile(authUser, requestDto);
         return new ResponseEntity<>("update success", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{user_id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long user_id, @Valid @RequestBody DeleteUserRequestDto requestDto) {
-        userService.deleteUser(user_id, requestDto);
+    @DeleteMapping("/")
+    public ResponseEntity<String> deleteUser(@Auth AuthUser authUser, @Valid @RequestBody DeleteUserRequestDto requestDto) {
+        userService.deleteUser(authUser, requestDto);
         return new ResponseEntity<>("delete success", HttpStatus.OK);
     }
 }

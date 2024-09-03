@@ -59,6 +59,7 @@ public class JwtFilter implements Filter {
             httpRequest.setAttribute("userId", claims.get("userId", Long.class));
             httpRequest.setAttribute("userName", claims.getSubject());
             httpRequest.setAttribute("email", claims.get("email", String.class));
+            httpRequest.setAttribute("userId", claims.get("userId", Long.class));
 
             filterChain.doFilter(servletRequest, servletResponse);
 

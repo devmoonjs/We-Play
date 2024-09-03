@@ -1,5 +1,6 @@
 package newsfeed.weplay.domain.user.service;
 
+import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.config.PasswordEncoder;
 import newsfeed.weplay.domain.jwt.JwtUtil;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
@@ -26,13 +27,13 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("등록된 사용자가 없습니다."));
     }
 
-    public UserResponseDto getUser(Long userId) {
-        UserResponseDto userResponseDto = new UserResponseDto(findUserById(userId));
+    public UserResponseDto getUser(AuthUser authUser) {
+        UserResponseDto userResponseDto = new UserResponseDto(findUserById(authUser.getUserId()));
         return userResponseDto;
     }
 
     @Transactional
-    public void updateUserProfile(Long userId, UpdateProfileRequestDto requestDto) {
+    public void updateUserProfile(AuthUser authUser, UpdateProfileRequestDto requestDto) {
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String newPassword = requestDto.getNewPassword();
@@ -42,7 +43,7 @@ public class UserService {
         Integer age = requestDto.getAge();
 
         // 기존 유저 엔티티 가져오기
-        User findUser = findUserById(userId);
+        User findUser = findUserById(authUser.getUserId());
 
         // 현재 비밀번호가 일치하지 않는 경우
         if(!passwordEncoder.matches(newPassword, findUser.getPassword())) {
@@ -73,10 +74,10 @@ public class UserService {
         findUser.update(user);
     }
 
-    public void deleteUser(Long userId, DeleteUserRequestDto requestDto) {
+    public void deleteUser(AuthUser authUser, DeleteUserRequestDto requestDto) {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
-        User user = findUserById(userId);
+        User user = findUserById(authUser.getUserId());
 
         // 유저가 이미 탈퇴했는지 확인
         if(user.isDeleted()) {
