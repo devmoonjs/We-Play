@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import newsfeed.weplay.domain.friend.entity.Friend;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,6 +37,12 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "user")
+    List<Friend> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "friendUser")
+    List<Friend> friends = new ArrayList<>();
 
     public User(String username, String email, String password, String imgUrl, String location, Integer age) {
         this.username = username;

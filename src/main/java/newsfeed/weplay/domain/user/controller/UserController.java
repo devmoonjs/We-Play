@@ -20,18 +20,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto requestDto) {
-        userService.signup(requestDto);
-        return new ResponseEntity<>("signup success", HttpStatus.CREATED);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto requestDto) {
-        userService.login(requestDto);
-        return new ResponseEntity<>("login success", HttpStatus.OK);
-    }
-
     @GetMapping("/{user_id}")
     public ResponseEntity<UserResponseDto> getUserProfile(@PathVariable Long user_id) {
         return new ResponseEntity<>(userService.getUser(user_id), HttpStatus.OK);

@@ -1,6 +1,9 @@
 package newsfeed.weplay.domain.user.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import newsfeed.weplay.domain.config.PasswordEncoder;
+import newsfeed.weplay.domain.jwt.JwtUtil;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
 import newsfeed.weplay.domain.user.dto.request.LoginRequestDto;
@@ -18,13 +21,15 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
-    public void signup(SignupRequestDto requestDto) {
+    public void signup(SignupRequestDto requestDto, HttpServletResponse servletResponse) {
         String username = requestDto.getUsername();
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -44,12 +49,15 @@ public class UserService {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
+        String token = jwtUtil.createToken(username);
+        jwtUtil.addJwtToCookie(token, servletResponse);
+
         User user = new User(username, email, password, imgUrl, location, age);
 
         userRepository.save(user);
     }
 
-    public void login(LoginRequestDto requestDto) {
+    public void login(LoginRequestDto requestDto, HttpServletResponse servletResponse) {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -59,6 +67,9 @@ public class UserService {
         if(!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
+        String token = jwtUtil.createToken(user.getUsername());
+        jwtUtil.addJwtToCookie(token, servletResponse);
     }
 
     private User findUserById(Long id) {
