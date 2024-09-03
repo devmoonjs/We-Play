@@ -4,9 +4,15 @@ import jakarta.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import newsfeed.weplay.domain.comment.entity.Comment;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import newsfeed.weplay.domain.friend.entity.Friend;
 import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +44,10 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "user")
     List<Friend> users = new ArrayList<>();

@@ -7,8 +7,14 @@ import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSaveResponseDto;
 import newsfeed.weplay.domain.comment.repository.CommentRepository;
 import newsfeed.weplay.domain.comment.entity.Comment;
+import newsfeed.weplay.domain.like.entity.Likes;
+import newsfeed.weplay.domain.post.entity.Post;
+import newsfeed.weplay.domain.post.repository.PostRepository;
+import newsfeed.weplay.domain.user.entity.User;
+import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +24,21 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public CommentSaveResponseDto postComment(Long planId, CommentRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new NullPointerException("해당 유저가 없습니다."));
 
-        Post post = postRepository.findById(planId);
+        Post post = postRepository.findById(planId).orElseThrow(() -> new NullPointerException());
 
         Comment comment = new Comment(requestDto, user, post);
 
         Comment saveComment = commentRepository.save(comment);
 
-        return CommentSaveResponseDto(saveComment);
+        return new CommentSaveResponseDto(saveComment);
     }
 
     public List<CommentResponseDto> searchPostComment(Long postId) {
@@ -41,7 +49,7 @@ public class CommentService {
 
         List<CommentResponseDto> dtoList = new ArrayList<>();
         for (Comment comment : commentList) {
-            List<Like> like = comment.getLike();
+            List<Likes> like = comment.getLikes();
             CommentResponseDto dto = new CommentResponseDto(comment, like);
             dtoList.add(dto);
         }
@@ -53,11 +61,11 @@ public class CommentService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NullPointerException("해당 유저가 없습니다."));
 
-        List<Comment> commentList = user.getComment();
+        List<Comment> commentList = user.getCommentList();
 
         List<CommentResponseDto> dtoList = new ArrayList<>();
         for (Comment comment : commentList) {
-            List<Like> like = comment.getLike();
+            List<Likes> like = comment.getLikes();
             CommentResponseDto dto = new CommentResponseDto(comment, like);
             dtoList.add(dto);
         }
@@ -70,15 +78,15 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new NullPointerException("해당 댓글이 없습니다."));
 
-        User user = userRepository.findBtId(requestDto.getUserId());
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow();
 
         if(comment.getUser().getId() != user.getId() || comment.getUser().getPassword() != user.getPassword()){
             throw new IllegalArgumentException("댓글 수정 권한이 업습니다.");
         }
-
+        List<Likes> like = comment.getLikes();
         comment.update(requestDto.getContent());
 
-        return new CommentResponseDto(comment);
+        return new CommentResponseDto(comment, like);
     }
 
     @Transactional
