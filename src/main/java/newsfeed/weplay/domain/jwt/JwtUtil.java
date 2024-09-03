@@ -39,13 +39,15 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String userName, String email) {
+    public String createToken(Long userId, String userName, String email) {
         Date date = new Date();
+
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(userName) // 사용자 식별값
                         .claim("email", email)
+                        .claim("userId", String.valueOf(userId))
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
