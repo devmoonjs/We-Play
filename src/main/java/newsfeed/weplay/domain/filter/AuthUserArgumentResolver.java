@@ -1,16 +1,27 @@
 package newsfeed.weplay.domain.filter;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
+import newsfeed.weplay.domain.jwt.JwtUtil;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.security.Key;
+
+@Slf4j
 public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
+
+    private Key key;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -34,9 +45,10 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
     ) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 
-        String username = (String) request.getAttribute("username");
+        Long userId = (Long) request.getAttribute("userId");
+        String username = (String) request.getAttribute("userName");
         String email = (String) request.getAttribute("email");
 
-        return new AuthUser(username, email);
+        return new AuthUser(userId, username, email);
     }
 }
