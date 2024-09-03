@@ -1,14 +1,13 @@
 package newsfeed.weplay.domain.post.controller;
 
-import newsfeed.weplay.domain.post.entity.Post;
+import newsfeed.weplay.domain.post.dto.PostRequestDto;
+import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -21,35 +20,43 @@ public class PostController {
         this.postService = postService;
     }
 
-    // 게시물 리스트 조회 (페이지네이션)
+    // 뉴스피드 조회 (현재 사용자만의 게시물을 최신순으로 조회)
+    @GetMapping("/newsfeed")
+    public ResponseEntity<Page<PostResponseDto>> getNewsFeed(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
+        Page<PostResponseDto> posts = postService.getNewsFeed(page, size);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    // 페이지네이션
     @GetMapping
-    public ResponseEntity<Page<Post>> getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
-        Page<Post> posts = postService.getAllPosts(page, size);
+    public ResponseEntity<Page<PostResponseDto>> getAllPosts(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
+        Page<PostResponseDto> posts = postService.getAllPosts(page, size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     // 특정 게시물 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
-        Optional<Post> post = postService.getPostById(id);
-        return post.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+    public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long id) {
+        return postService.getPostById(id)
+                .map(post -> new ResponseEntity<>(post, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // 게시물 생성
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post) {
-        Post createdPost = postService.createPost(post);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto postRequestDto) {
+        PostResponseDto createdPost = postService.createPost(postRequestDto);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
     // 게시물 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@PathVariable Long id, @RequestBody Post updatedPost) {
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
         try {
-            Post post = postService.updatePost(id, updatedPost);
-            return new ResponseEntity<>(post, HttpStatus.OK);
+            PostResponseDto updatedPost = postService.updatePost(id, postRequestDto);
+            return new ResponseEntity<>(updatedPost, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

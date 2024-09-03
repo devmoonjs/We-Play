@@ -1,5 +1,7 @@
 package newsfeed.weplay.domain.post.service;
 
+import newsfeed.weplay.domain.post.dto.PostRequestDto;
+import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.post.entity.Post;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,29 +23,39 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public Page<Post> getAllPosts(int page, int size) {
-        return postRepository.findAll(PageRequest.of(page, size, Sort.by("createdAt").descending()));
+    // 뉴스피드 조회 (모든 게시물을 최신순으로 조회)
+    public Page<PostResponseDto> getNewsFeed(int page, int size) {
+        Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, size));
+        return posts.map(this::convertToResponseDto);
     }
 
-    public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id);
+    public Page<PostResponseDto> getAllPosts(int page, int size) {
+        Page<Post> posts = postRepository.findAll(PageRequest.of(page, size, Sort.by("createdAt").descending()));
+        return posts.map(this::convertToResponseDto);
     }
 
-    public Post createPost(Post post) {
-        return postRepository.save(post);
+    public Optional<PostResponseDto> getPostById(Long id) {
+        return postRepository.findById(id).map(this::convertToResponseDto);
     }
 
-    public Post updatePost(Long id, Post updatedPost) {
+    public PostResponseDto createPost(PostRequestDto postRequestDto) {
+        Post post = convertToEntity(postRequestDto);
+        Post createdPost = postRepository.save(post);
+        return convertToResponseDto(createdPost);
+    }
+
+    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto) {
         Optional<Post> postOptional = postRepository.findById(id);
 
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
-            post.setTitle(updatedPost.getTitle());
-            post.setContent(updatedPost.getContent());
-            post.setCity(updatedPost.getCity());
+            post.setTitle(postRequestDto.getTitle());
+            post.setContent(postRequestDto.getContent());
+            post.setCity(postRequestDto.getCity());
             post.setUpdatedAt(LocalDateTime.now());
 
-            return postRepository.save(post);
+            Post updatedPost = postRepository.save(post);
+            return convertToResponseDto(updatedPost);
         } else {
             throw new RuntimeException("Post not found with id " + id);
         }
@@ -51,5 +63,25 @@ public class PostService {
 
     public void deletePost(Long id) {
         postRepository.deleteById(id);
+    }
+
+    private PostResponseDto convertToResponseDto(Post post) {
+        PostResponseDto dto = new PostResponseDto();
+        dto.setId(post.getId());
+        dto.setUserId(post.getUser() != null ? post.getUser().getId() : null);
+        dto.setTitle(post.getTitle());
+        dto.setContent(post.getContent());
+        dto.setCity(post.getCity());
+        dto.setCreatedAt(post.getCreatedAt());
+        dto.setUpdatedAt(post.getUpdatedAt());
+        return dto;
+    }
+
+    private Post convertToEntity(PostRequestDto dto) {
+        Post post = new Post();
+        post.setTitle(dto.getTitle());
+        post.setContent(dto.getContent());
+        post.setCity(dto.getCity());
+        return post;
     }
 }

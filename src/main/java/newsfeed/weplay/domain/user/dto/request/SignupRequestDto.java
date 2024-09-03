@@ -26,4 +26,8 @@ public class SignupRequestDto {
 
     @Positive(message = "양수만 입력 가능합니다.")
     private Integer age;
+
+    public void encodedPassword(String password) {
+        this.password = password;
+    }
 }
