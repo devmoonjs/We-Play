@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
 import newsfeed.weplay.domain.common.entity.BaseEntity;
+import newsfeed.weplay.domain.like.entity.Likes;
+import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.user.entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,7 +36,10 @@ public class Comment extends BaseEntity {
     private Post post;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> like;
+    private List<Likes> likes = new ArrayList<>(); //좋아요 연결
+
+    @Column(name = "likes", nullable = false)
+    private int likeCount = 0; //좋아요 수 세기
 
     public Comment(CommentRequestDto requestDto, User user, Post post) {
         this.content = requestDto.getContent();
@@ -41,5 +47,13 @@ public class Comment extends BaseEntity {
 
     public void update(String content) {
         this.content = content;
+    }
+
+    public void increaseLikeCount(){
+        this.likeCount++; //좋아요 증가
+    }
+
+    public void decreaseLikeCount(){
+        this.likeCount--; //좋아요 감소
     }
 }
