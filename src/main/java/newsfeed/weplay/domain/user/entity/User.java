@@ -7,8 +7,12 @@ import lombok.NoArgsConstructor;
 import newsfeed.weplay.domain.comment.entity.Comment;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import newsfeed.weplay.domain.friend.entity.Friend;
+import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +49,12 @@ public class User {
     private List<Comment> commentList = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "user")
+    List<Friend> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "friendUser")
+    List<Friend> friends = new ArrayList<>();
+
     public User(String username, String email, String password, String imgUrl, String location, Integer age) {
         this.username = username;
         this.email = email;
@@ -52,6 +62,15 @@ public class User {
         this.imgUrl = imgUrl;
         this.location = location;
         this.age = age;
+    }
+
+    public User(SignupRequestDto requestDto) {
+        this.username = requestDto.getUsername();
+        this.email = requestDto.getEmail();
+        this.password = requestDto.getPassword();
+        this.imgUrl = requestDto.getImgUrl();
+        this.location = requestDto.getLocation();
+        this.age = requestDto.getAge();
     }
 
     public void update(User user) {
