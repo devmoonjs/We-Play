@@ -25,6 +25,7 @@ public class LikeService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public void likePost(Long postId, PostLikeRequestDto postLikeRequestDto) {
         User user = userRepository.findById(postLikeRequestDto.getUserId()).orElseThrow(() -> new NullPointerException());
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("해당 게시글이 존재하지 않습니다."));
@@ -36,6 +37,7 @@ public class LikeService {
         post.increaseLikeCount();
     }
 
+    @Transactional
     public void deleteLikePost(Long postId,PostLikeRequestDto postLikeRequestDto) {
         //게시글이 있는지 확인
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("해당 게시글이 존재하지 않습니다."));
@@ -48,6 +50,7 @@ public class LikeService {
         post.decreaseLikeCount();
     }
 
+    @Transactional
     public void likeComment(Long commentId, CommentLikeRequestDto commentLikeRequestDto) {
         User user = userRepository.findById(commentLikeRequestDto.getUserId()).orElseThrow(() -> new NullPointerException());
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NullPointerException());
@@ -59,6 +62,7 @@ public class LikeService {
         comment.increaseLikeCount();
     }
 
+    @Transactional
     public void deleteLikeComment(Long commentId,CommentLikeRequestDto commentLikeRequestDto) {
         //댓글이 있는지 확인
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NullPointerException("해당 댓글이 존재하지 않습니다."));
