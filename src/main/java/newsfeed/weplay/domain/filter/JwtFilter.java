@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtFilter implements Filter {
 
+    public static final String AUTHORIZATION = "Authorization";
     private final JwtUtil jwtUtil;
 
 
@@ -34,19 +35,17 @@ public class JwtFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
         String url = httpRequest.getRequestURI();
-        String method = httpRequest.getMethod();
 
         if (url.startsWith("/api/auth/")) {
-            log.info("========================== 인증처리가 필요 없으므로 필터를 넘어갑니다. ==========================");
+            log.info("===== 인증처리가 필요 없으므로 필터를 넘어갑니다. =====");
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
 
-        log.info("========================== 필터를 시작합니다. ==========================");
-        String bearerJwt = jwtUtil.getTokenFromRequest(httpRequest);
-        String bearerJwt2 = httpRequest.getHeader("Authorization"); // 헤더에서 jWT 가져오기
+        log.info("===== 필터를 시작합니다. =====");
+        String bearerJwt = httpRequest.getHeader(AUTHORIZATION); // 헤더에서 jWT 가져오기
 
-        if (bearerJwt == null || !bearerJwt.startsWith("Bearer ")) {
+        if (bearerJwt == null || !bearerJwt.startsWith("Bearer")) {
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "JWT 토큰이 필요합니다.");
             return;
         }
@@ -55,7 +54,10 @@ public class JwtFilter implements Filter {
 
         // 유저가 존재할 경우 필터 허용
         try {
+            Claims claims = jwtUtil.getUserInfoFromToken(jwt);
 
+            httpRequest.setAttribute("userName", claims.getSubject());
+            httpRequest.setAttribute("email", claims.get("email", String.class));
 
             filterChain.doFilter(servletRequest, servletResponse);
 
@@ -75,38 +77,5 @@ public class JwtFilter implements Filter {
             log.error("JWT 토큰 검증 중 오류가 발생했습니다.", e);
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT 토큰 검증 중 오류가 발생했습니다.");
         }
-    }
-
-    private boolean checkMethodPath(String method, String url, List<String> allowedMethods, String pathPrefix) {
-        if (!checkHttpMethod(method, allowedMethods)) {
-            return false;
-        }
-
-        if (!checkPathUrl(url, pathPrefix)) {
-            return false;
-        }
-
-//        String idPart = extractIdFromPath(url, pathPrefix);
-        return true;
-    }
-
-    // 메서드 유효성 검사
-    private boolean checkHttpMethod(String method, List<String> allowedMethods) {
-        return allowedMethods.stream().anyMatch(allowedMethod -> allowedMethod.equalsIgnoreCase(method));
-    }
-
-    // 경로 유효성 검사
-    private boolean checkPathUrl(String url, String pathPrefix) {
-        return url.startsWith(pathPrefix);
-    }
-
-    // 유저 ID 값만 추출
-    private String extractIdFromPath(String url, String pathPrefix) {
-        return url.substring(pathPrefix.length());
-    }
-
-    // ID 값 유효성 검사 (숫자인지)
-    private boolean isNumeric(String str) {
-        return str != null && str.matches("\\d+");
     }
 }

@@ -1,18 +1,16 @@
 package newsfeed.weplay.domain.friend.service;
 
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.friend.dto.response.FriendSimpleResponseDto;
 import newsfeed.weplay.domain.friend.entity.Friend;
 import newsfeed.weplay.domain.friend.entity.FriendStatusEnum;
 import newsfeed.weplay.domain.friend.repository.FriendRepository;
-import newsfeed.weplay.domain.friend.repository.FriendRepository;
-import newsfeed.weplay.domain.jwt.JwtUtil;
 import newsfeed.weplay.domain.user.entity.User;
 import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,22 +20,19 @@ import java.util.List;
 @Slf4j
 public class FriendService {
     private final FriendRepository friendRepository;
-    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-
-    public void requestFriend(Long id, HttpServletRequest servletRequest) {
-
+    @Transactional
+    public void requestFriend(Long id, AuthUser authUser) {
+        log.info("userEmail : {} ", authUser.getEmail());
+        log.info("userName : {} ", authUser.getUsername());
         // 이미 친구인지 확인
-        Claims info = jwtUtil.getUserFromToken(servletRequest);
-        User user = userRepository.findByUsername(info.getSubject()).orElseThrow();
+        User user = userRepository.findByEmail(authUser.getEmail()).orElseThrow(
+                () -> new NullPointerException("해당 유저가 없습니다.")
+        );
 
 //        List<Friend> friends = user.getFriends();
         List<Friend> users = user.getUsers();
-        for (Friend friend : users) {
-            log.info("User : {}" , friend.getUser().getUsername());
-            log.info("friend : {}", friend.getFriendUser().getUsername());
-        }
 
         for (Friend friend : users) {
             if (friend.getFriendUser().getId().equals(id)) {
@@ -55,9 +50,9 @@ public class FriendService {
         friendRepository.save(newFriend);
     }
 
-    public List<FriendSimpleResponseDto> getFriendList(HttpServletRequest servletRequest) {
-        Claims info = jwtUtil.getUserFromToken(servletRequest);
-        User user = userRepository.findByUsername(info.getSubject()).orElseThrow();
+    @Transactional(readOnly = true)
+    public List<FriendSimpleResponseDto> getFriendList(AuthUser authuser) {
+        User user = userRepository.findByEmail(authuser.getEmail()).orElseThrow();
 
         List<Friend> users = user.getUsers();
         List<FriendSimpleResponseDto> friends = new ArrayList<>();

@@ -1,12 +1,11 @@
 package newsfeed.weplay.domain.auth.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import newsfeed.weplay.domain.auth.service.AuthService;
 import newsfeed.weplay.domain.user.dto.request.LoginRequestDto;
 import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
-import newsfeed.weplay.domain.user.service.UserService;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,18 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-
-    private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto requestDto, HttpServletResponse servletResponse) {
-        userService.signup(requestDto, servletResponse);
-        return new ResponseEntity<>("signup success", HttpStatus.CREATED);
+    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto requestDto) {
+        String barerToken = authService.signup(requestDto);
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.AUTHORIZATION, barerToken)
+                .build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletResponse servletResponse) {
-        userService.login(requestDto, servletResponse);
-        return new ResponseEntity<>("login success", HttpStatus.OK);
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto requestDto) {
+        String barerToken = authService.login(requestDto);
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.AUTHORIZATION, barerToken)
+                .build();
     }
 }

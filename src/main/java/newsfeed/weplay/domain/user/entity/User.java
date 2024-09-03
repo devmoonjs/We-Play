@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import newsfeed.weplay.domain.friend.entity.Friend;
+import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,15 @@ public class User {
         this.imgUrl = imgUrl;
         this.location = location;
         this.age = age;
+    }
+
+    public User(SignupRequestDto requestDto) {
+        this.username = requestDto.getUsername();
+        this.email = requestDto.getEmail();
+        this.password = requestDto.getPassword();
+        this.imgUrl = requestDto.getImgUrl();
+        this.location = requestDto.getLocation();
+        this.age = requestDto.getAge();
     }
 
     public void update(User user) {
