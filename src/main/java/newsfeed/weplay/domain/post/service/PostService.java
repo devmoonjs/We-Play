@@ -1,9 +1,11 @@
 package newsfeed.weplay.domain.post.service;
 
+import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.post.entity.Post;
+import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,14 +16,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
-
-    @Autowired
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
+    private final UserRepository userRepository;
 
     // 뉴스피드 조회 (모든 게시물을 최신순으로 조회)
     public Page<PostResponseDto> getNewsFeed(int page, int size) {
