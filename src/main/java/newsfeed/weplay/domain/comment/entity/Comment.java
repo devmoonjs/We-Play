@@ -36,4 +36,8 @@ public class Comment extends BaseEntity {
     public Comment(CommentRequestDto requestDto, User user, Post post) {
         this.content = requestDto.getContent();
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }
