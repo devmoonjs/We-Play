@@ -83,10 +83,10 @@ public class CommentService {
         if(comment.getUser().getId() != user.getId() || comment.getUser().getPassword() != user.getPassword()){
             throw new IllegalArgumentException("댓글 수정 권한이 업습니다.");
         }
-
+        List<Likes> like = comment.getLikes();
         comment.update(requestDto.getContent());
 
-        return new CommentResponseDto(comment,like);
+        return new CommentResponseDto(comment, like);
     }
 
     @Transactional
