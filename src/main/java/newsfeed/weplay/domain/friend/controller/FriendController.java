@@ -30,4 +30,16 @@ public class FriendController {
         List<FriendSimpleResponseDto> friends = friendService.getFriendList(authUser);
         return ResponseEntity.ok().body(friends);
     }
+
+    /*
+        승인 ->
+        1. 친구신청 받은 신청 목록을 리스트로 가져와서
+        2.
+     */
+
+    @GetMapping("/accepts/{userId}")
+    public ResponseEntity<Void> getFriendList(@PathVariable Long userId, @Auth AuthUser authUser) {
+        friendService.acceptFriend(userId, authUser);
+        return ResponseEntity.ok().build();
+    }
 }

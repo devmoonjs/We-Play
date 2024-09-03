@@ -1,5 +1,7 @@
 package newsfeed.weplay.domain.post.controller;
 
+import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.service.PostService;
@@ -46,8 +48,8 @@ public class PostController {
 
     // 게시물 생성
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto postRequestDto) {
-        PostResponseDto createdPost = postService.createPost(postRequestDto);
+    public ResponseEntity<PostResponseDto> createPost(@Auth AuthUser authUser, @RequestBody PostRequestDto postRequestDto) {
+        PostResponseDto createdPost = postService.createPost(authUser, postRequestDto);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
