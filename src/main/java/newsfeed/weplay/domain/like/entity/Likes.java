@@ -3,12 +3,13 @@ package newsfeed.weplay.domain.like.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import newsfeed.weplay.domain.common.entity.BaseEntity;
 import newsfeed.weplay.domain.user.entity.User;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class PostLike {
+public class Likes extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,8 +22,17 @@ public class PostLike {
     @JoinColumn(name = "post_id" , nullable = false)
     private Post post;
 
-    public PostLike (User user,Post post){
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id",nullable = false)
+    private Comment comment;
+
+    public Likes(User user, Post post){
         this.user = user;
         this.post = post;
+    }
+
+    public Likes(User user, Comment comment){
+        this.user = user;
+        this.comment = comment;
     }
 }

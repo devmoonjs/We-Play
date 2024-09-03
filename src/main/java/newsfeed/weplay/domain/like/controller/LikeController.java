@@ -15,7 +15,7 @@ public class LikeController {
 
     @PostMapping("/post/{postId}/like") //게시글 좋아요
     public void upLikePost (@PathVariable Long postId , @RequestBody PostLikeRequestDto postLikeRequestDto){
-        likeService.upLikePost(postId,postLikeRequestDto);
+        likeService.likePost(postId,postLikeRequestDto);
     }
 
     @DeleteMapping("/post/{postId}/like") //게시글 좋아요 삭제
@@ -25,7 +25,7 @@ public class LikeController {
 
     @PostMapping("/comment/{commentId}/like")
     public void upLikeComment(@PathVariable Long commentId, @RequestBody CommentLikeRequestDto commentLikeRequestDto){
-        likeService.upLikeComment(commentId,commentLikeRequestDto);
+        likeService.likeComment(commentId,commentLikeRequestDto);
     }
 
     @DeleteMapping("/comment/{commentId}/like")
