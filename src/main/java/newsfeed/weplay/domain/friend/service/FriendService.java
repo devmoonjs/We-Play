@@ -24,8 +24,6 @@ public class FriendService {
 
     @Transactional
     public void requestFriend(Long id, AuthUser authUser) {
-        log.info("userEmail : {} ", authUser.getEmail());
-        log.info("userName : {} ", authUser.getUsername());
         // 이미 친구인지 확인
         User user = userRepository.findByEmail(authUser.getEmail()).orElseThrow(
                 () -> new NullPointerException("해당 유저가 없습니다.")

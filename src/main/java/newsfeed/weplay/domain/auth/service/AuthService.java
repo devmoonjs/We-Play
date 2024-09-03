@@ -3,6 +3,7 @@ package newsfeed.weplay.domain.auth.service;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import newsfeed.weplay.domain.config.PasswordEncoder;
 import newsfeed.weplay.domain.jwt.JwtUtil;
 import newsfeed.weplay.domain.user.dto.request.LoginRequestDto;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
@@ -41,9 +43,9 @@ public class AuthService {
         requestDto.encodedPassword(passwordEncoder.encode(requestDto.getPassword()));
         User user = new User(requestDto);
         userRepository.save(user);
+        Long userId = user.getId();
 
-        return jwtUtil.createToken(username, email);
-
+        return jwtUtil.createToken(userId, username, email);
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +61,7 @@ public class AuthService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        return jwtUtil.createToken(user.getUsername(), user.getEmail());
+        return jwtUtil.createToken(user.getId(), user.getUsername(), user.getEmail());
     }
 
 }
