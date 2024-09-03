@@ -3,7 +3,9 @@ package newsfeed.weplay.domain.like.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import newsfeed.weplay.domain.comment.entity.Comment;
 import newsfeed.weplay.domain.common.entity.BaseEntity;
+import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.user.entity.User;
 
 @Entity
