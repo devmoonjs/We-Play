@@ -1,4 +1,4 @@
-package newsfeed.weplay.post.dto;
+package newsfeed.weplay.domain.post.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

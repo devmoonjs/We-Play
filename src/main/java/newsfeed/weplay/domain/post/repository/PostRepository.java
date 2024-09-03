@@ -1,6 +1,6 @@
-package newsfeed.weplay.post.repository;
+package newsfeed.weplay.domain.post.repository;
 
-import newsfeed.weplay.post.entity.Post;
+import newsfeed.weplay.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

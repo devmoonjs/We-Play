@@ -1,4 +1,4 @@
-package newsfeed.weplay.post.entity;
+package newsfeed.weplay.domain.post.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

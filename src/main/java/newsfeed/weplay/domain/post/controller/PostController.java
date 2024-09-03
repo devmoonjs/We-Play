@@ -1,7 +1,7 @@
-package newsfeed.weplay.post.controller;
+package newsfeed.weplay.domain.post.controller;
 
-import newsfeed.weplay.post.entity.Post;
-import newsfeed.weplay.post.service.PostService;
+import newsfeed.weplay.domain.post.entity.Post;
+import newsfeed.weplay.domain.post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
