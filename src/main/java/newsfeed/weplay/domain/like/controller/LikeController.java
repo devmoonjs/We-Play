@@ -13,22 +13,22 @@ public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping("/post/{postId}/like") //게시글 좋아요
+    @PostMapping("/posts/{postId}/likes") //게시글 좋아요
     public void upLikePost (@PathVariable Long postId , @RequestBody PostLikeRequestDto postLikeRequestDto){
         likeService.likePost(postId,postLikeRequestDto);
     }
 
-    @DeleteMapping("/post/{postId}/like") //게시글 좋아요 삭제
+    @DeleteMapping("/posts/{postId}/likes") //게시글 좋아요 삭제
     public void deleteLikePost(@PathVariable Long postId,@RequestBody PostLikeRequestDto postLikeRequestDto){
         likeService.deleteLikePost(postId,postLikeRequestDto);
     }
 
-    @PostMapping("/comment/{commentId}/like")
+    @PostMapping("/comments/{commentId}/likes")
     public void upLikeComment(@PathVariable Long commentId, @RequestBody CommentLikeRequestDto commentLikeRequestDto){
         likeService.likeComment(commentId,commentLikeRequestDto);
     }
 
-    @DeleteMapping("/comment/{commentId}/like")
+    @DeleteMapping("/comments/{commentId}/likes")
     public void deleteLikeComment(@PathVariable Long commentId,@RequestBody CommentLikeRequestDto commentLikeRequestDto){
         likeService.deleteLikeComment(commentId,commentLikeRequestDto);
     }
