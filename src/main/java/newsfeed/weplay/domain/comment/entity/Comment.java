@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
+import newsfeed.weplay.domain.common.entity.BaseEntity;
+import newsfeed.weplay.domain.user.entity.User;
 
 import java.util.List;
 

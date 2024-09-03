@@ -14,7 +14,7 @@ public class CommentResponseDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public CommentResponseDto(Comment comment, List<Lzike> like){
+    public CommentResponseDto(Comment comment, List<Like> like){
         this.id = comment.getId();
         this.content = comment.getContent();
         this.userName = comment.getUser().getUserName();

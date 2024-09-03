@@ -9,7 +9,6 @@ import newsfeed.weplay.domain.comment.repository.CommentRepository;
 import newsfeed.weplay.domain.comment.entity.Comment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
