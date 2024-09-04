@@ -37,14 +37,19 @@ public class CommentController {
         return ResponseEntity.ok(commentService.searchUserComment(userId));
     }
 
-    @PutMapping("comments/{commentId}")
+    @PutMapping("/comments/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId
             , @RequestBody CommentRequestDto requestDto, @Auth AuthUser authUser) {
         return ResponseEntity.ok(commentService.updateComment(commentId, requestDto, authUser));
     }
 
-    @DeleteMapping("comments/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId, @Auth AuthUser authUser) {
         return commentService.deleteComment(commentId, authUser);
+    }
+
+    @GetMapping("/comments/{commentId}/reports")
+    public ResponseEntity<String> reportComment(@PathVariable Long commentId, @Auth AuthUser authUser, @RequestBody CommentRequestDto requestDto){
+        return commentService.reportComment(commentId, authUser, requestDto);
     }
 }

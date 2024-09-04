@@ -8,7 +8,9 @@ import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSaveResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSearchResponseDto;
 import newsfeed.weplay.domain.comment.entity.Comment;
+import newsfeed.weplay.domain.comment.entity.Report;
 import newsfeed.weplay.domain.comment.repository.CommentRepository;
+import newsfeed.weplay.domain.comment.repository.ReportRepository;
 import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.tag.entity.Tag;
@@ -36,6 +38,9 @@ public class CommentService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final UserNotificationsRepository userNotificationsRepository;
+    private final ReportRepository reportRepository;
+    private final ReportService reportService;
+
 
     @Transactional
     public CommentSaveResponseDto postComment(Long postId, CommentSaveRequestDto requestDto, AuthUser authUser) {
@@ -62,14 +67,14 @@ public class CommentService {
                 userNotificationsRepository.save(userNotifications);
             }
         }
+        post.increaseCommentCount();
 
 
         return new CommentSaveResponseDto(saveComment);
     }
 
     public List<CommentSearchResponseDto> searchPostComment(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NullPointerException("해당 게시글이 없습니다."));
+        Post post = searchPost(postId);
         List<Comment> commentList = post.getCommentList();
 
         return commentDtoList(commentList);
@@ -86,8 +91,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, AuthUser authUser) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NullPointerException("해당 댓글이 없습니다."));
+        Comment comment = searchComment(commentId);
 
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
 
@@ -102,20 +106,61 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity<String> deleteComment(Long commentId, AuthUser authUser) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NullPointerException("해당 댓글이 없습니다."));
+        Comment comment = searchComment(commentId);
+
+        Post post = searchPost(comment.getPost().getId());
 
         User user = comment.getUser();
 
         if(!Objects.equals(user.getId(), authUser.getUserId())){
-            throw new IllegalArgumentException("댓글 수정 권한이 업습니다.");
+            return ResponseEntity.badRequest().body("댓글 수정 권한이 업습니다.");
         }
 
         commentRepository.delete(comment);
 
+        post.decraseCommentCount();
+
         return ResponseEntity.ok("댓글이 성공적으로 삭제됐습니다.");
     }
 
+    @Transactional
+    public ResponseEntity<String> reportComment(Long commentId, AuthUser authUser, CommentRequestDto requestDto) {
+        Comment comment = searchComment(commentId);
+
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
+
+        List<Report> reportList = comment.getReportList();
+
+        if(reportList != null){
+            for (Report report : reportList) {
+                if(report.getUser().getId().equals(authUser.getUserId())){
+                    return ResponseEntity.badRequest().body("이미 해당 댓글을 신고하셨습니다.");
+                }
+            }
+        }
+
+        Report report = new Report(requestDto.getContent(), user, comment);
+
+        reportRepository.save(report);
+
+        comment.increaseReportCount();
+
+        // Lazy로 인해 메서드 종료 시 까지 List크기가 반영이 안되므로 강제 추가
+        comment.getReportList().add(report);
+
+        if(comment.getReportList().size() >= 3){
+            reportService.commentBlind(comment);
+            return ResponseEntity.ok("신고 누적으로 해당 댓글이 블라인드 처리됐습니다.");
+        }else{
+            return ResponseEntity.ok("댓글 신고 완료.");
+        }
+    }
+
+    // 댓글 조회
+    public Comment searchComment(Long commentId){
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new NullPointerException("해당 댓글이 없습니다."));
+    }
 
     // 게시글 조회
     public Post searchPost(Long postId){

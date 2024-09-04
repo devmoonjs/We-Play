@@ -37,11 +37,14 @@ public class Post extends BaseEntity {
     @Column(name = "likes", nullable = false)
     private int likeCount = 0; //좋아요 수 세기
 
+    @Column(name = "comments", nullable = false)
+    private int commentCount = 0; //댓글 수 세기
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>(); // 댓글 연결
 
-    @Column(name = "comments", nullable = false)
-    private int commentCount = 0; //좋아요 수 세기
+    @Column(name = "views")
+    private int viewCount = 0; // 조회수
 
     public void setUser(User user) {
         this.user = user;
@@ -59,8 +62,8 @@ public class Post extends BaseEntity {
         this.city = city;
     }
 
-    public void setCommentsList(List<Comment> commentList) {
-        this.commentList = commentList;
+    public void increaseViewCount(){
+        this.viewCount ++; //조회수 증가 메서드
     }
 
     public void update(Post updatedPost) {
@@ -76,5 +79,17 @@ public class Post extends BaseEntity {
 
     public void decreaseLikeCount(){
         this.likeCount--; //좋아요 감소
+    }
+
+//     commentCount 증가 메서드
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+
+    // commentCount 감소 메서드
+    public void decraseCommentCount() {
+        if (this.commentCount > 0) {
+            this.commentCount--;
+        }
     }
 }
