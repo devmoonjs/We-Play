@@ -23,7 +23,7 @@ public class LikeController {
         likeService.deleteLikePost(postId,authUser);
     }
 
-    @PostMapping("/comments/{commentId}/likes")
+    @GetMapping("/comments/{commentId}/likes")
     public void upLikeComment(@PathVariable Long commentId, @Auth AuthUser authUser){
         likeService.likeComment(commentId,authUser);
     }
