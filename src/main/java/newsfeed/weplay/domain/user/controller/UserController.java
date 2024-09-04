@@ -5,8 +5,6 @@ import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
-import newsfeed.weplay.domain.user.dto.request.LoginRequestDto;
-import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
 import newsfeed.weplay.domain.user.dto.response.UserResponseDto;
 import newsfeed.weplay.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
