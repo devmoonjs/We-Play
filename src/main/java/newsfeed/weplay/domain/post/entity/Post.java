@@ -3,6 +3,7 @@ package newsfeed.weplay.domain.post.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import newsfeed.weplay.domain.comment.entity.Comment;
 import newsfeed.weplay.domain.common.entity.BaseEntity;
 import newsfeed.weplay.domain.like.entity.Likes;
 import newsfeed.weplay.domain.user.entity.User;
@@ -51,6 +52,12 @@ public class Post extends BaseEntity {
     @Column(name = "likes", nullable = false)
     private int likeCount = 0; //좋아요 수 세기
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>(); // 댓글 연결
+
+    @Column(name = "comments", nullable = false)
+    private int commentCount = 0; //좋아요 수 세기
+
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
@@ -78,6 +85,14 @@ public class Post extends BaseEntity {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setCommentsList(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
+    public void serCommentsCount(int commentsCount){
+        this.commentCount = commentsCount;
     }
 
     public void update(Post updatedPost) {
