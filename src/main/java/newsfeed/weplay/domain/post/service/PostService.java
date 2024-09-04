@@ -6,8 +6,8 @@ import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.post.entity.Post;
+import newsfeed.weplay.domain.user.entity.User;
 import newsfeed.weplay.domain.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,27 +24,28 @@ public class PostService {
     private final UserRepository userRepository;
 
     // 뉴스피드 조회 (모든 게시물을 최신순으로 조회)
-    public Page<PostResponseDto> getNewsFeed(int page, int size) {
+    public Page<PostResponseDto> getNewsFeed(AuthUser authUser, int page, int size) {
         Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, size));
         return posts.map(this::convertToResponseDto);
     }
 
-    public Page<PostResponseDto> getAllPosts(int page, int size) {
+    public Page<PostResponseDto> getAllPosts(AuthUser authUser, int page, int size) {
         Page<Post> posts = postRepository.findAll(PageRequest.of(page, size, Sort.by("createdAt").descending()));
         return posts.map(this::convertToResponseDto);
     }
 
-    public Optional<PostResponseDto> getPostById(Long id) {
+    public Optional<PostResponseDto> getPostById(AuthUser authUser, Long id) {
         return postRepository.findById(id).map(this::convertToResponseDto);
     }
 
-    public PostResponseDto createPost(PostRequestDto postRequestDto) {
+    public PostResponseDto createPost(AuthUser authUser, PostRequestDto postRequestDto) {
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
         Post post = convertToEntity(postRequestDto);
         Post createdPost = postRepository.save(post);
         return convertToResponseDto(createdPost);
     }
 
-    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto) {
+    public PostResponseDto updatePost(AuthUser authUser, Long id, PostRequestDto postRequestDto) {
         Optional<Post> postOptional = postRepository.findById(id);
 
         if (postOptional.isPresent()) {
@@ -61,7 +62,7 @@ public class PostService {
         }
     }
 
-    public void deletePost(Long id) {
+    public void deletePost(AuthUser authUser, Long id) {
         postRepository.deleteById(id);
     }
 
