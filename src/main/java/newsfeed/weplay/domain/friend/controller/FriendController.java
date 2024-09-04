@@ -29,7 +29,7 @@ public class FriendController {
         return ResponseEntity.ok().body(friends);
     }
 
-    @GetMapping("/accept/{status}/{userId}")
+    @GetMapping("/{status}/{userId}")
     public ResponseEntity<Void> acceptFriend(
             @Auth AuthUser authUser,
             @PathVariable String status,
