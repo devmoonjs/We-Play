@@ -41,6 +41,7 @@ public class PostService {
     public PostResponseDto createPost(AuthUser authUser, PostRequestDto postRequestDto) {
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
         Post post = convertToEntity(postRequestDto);
+        post.setUser(user);
         Post createdPost = postRepository.save(post);
         return convertToResponseDto(createdPost);
     }
