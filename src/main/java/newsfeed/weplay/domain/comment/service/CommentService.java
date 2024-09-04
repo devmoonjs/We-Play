@@ -3,6 +3,7 @@ package newsfeed.weplay.domain.comment.service;
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
+import newsfeed.weplay.domain.comment.dto.request.CommentSaveRequestDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSaveResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSearchResponseDto;
@@ -10,6 +11,8 @@ import newsfeed.weplay.domain.comment.entity.Comment;
 import newsfeed.weplay.domain.comment.repository.CommentRepository;
 import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.post.repository.PostRepository;
+import newsfeed.weplay.domain.tag.entity.Tag;
+import newsfeed.weplay.domain.tag.repository.TagRepository;
 import newsfeed.weplay.domain.user.entity.User;
 import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +31,11 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final TagRepository tagRepository;
 
     @Transactional
-    public CommentSaveResponseDto postComment(Long postId, CommentRequestDto requestDto, AuthUser authUser) {
+    public CommentSaveResponseDto postComment(Long postId, CommentSaveRequestDto requestDto, AuthUser authUser) {
+
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
 
         Post post = searchPost(postId);
@@ -37,6 +43,15 @@ public class CommentService {
         Comment comment = new Comment(requestDto, user, post);
 
         Comment saveComment = commentRepository.save(comment);
+
+        if(requestDto.getTaggedUserIdList().length != 0) {
+            for (Long userId : requestDto.getTaggedUserIdList()) {
+                User taggedUser = userRepository.findById(userId).orElseThrow();
+                Tag tag = new Tag(user, taggedUser, comment);
+                tagRepository.save(tag);
+            }
+        }
+
 
         return new CommentSaveResponseDto(saveComment);
     }
