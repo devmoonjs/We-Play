@@ -18,18 +18,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
     @Transactional
     public void requestFriend(Long id, AuthUser authUser) {
-        // 이미 친구인지 확인
+
         User user = userRepository.findByEmail(authUser.getEmail()).orElseThrow(
                 () -> new NullPointerException("해당 유저가 없습니다.")
         );
 
-//        List<Friend> friends = user.getFriends();
         List<Friend> users = user.getUsers();
 
         for (Friend friend : users) {
@@ -62,13 +62,15 @@ public class FriendService {
     }
 
     @Transactional
-    public void acceptFriend(Long userId, AuthUser authUser) {
+    public void acceptFriend(String status, Long userId, AuthUser authUser) {
+        FriendStatusEnum statusEnum = convertToEnum(status);
+
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
         List<Friend> friends = friendRepository.findFriendsByFriendUser(user);
 
         for (Friend friend : friends) {
             if (friend.getUser().getId().equals(userId)) {
-                friend.setFriendStatus(FriendStatusEnum.ACCEPT);
+                friend.setFriendStatus(statusEnum);
                 friendRepository.save(friend);
                 return;
             }
@@ -78,11 +80,16 @@ public class FriendService {
     @Transactional
     public void deleteFriend(AuthUser authUser, Long friendId) {
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
-        log.info("UserId = {}", user.getId());
-
         User friendUser = userRepository.findById(friendId).orElseThrow();
-        log.info("friendUserId = {}", friendUser.getId());
 
         friendRepository.deleteFriendByFriendUserAndUser(friendUser, user);
+    }
+
+    public FriendStatusEnum convertToEnum(String status) {
+        try {
+            return FriendStatusEnum.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("존재하지 않은 상태 요청 : " + status);
+        }
     }
 }

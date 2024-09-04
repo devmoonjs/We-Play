@@ -17,25 +17,28 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @GetMapping("/accept/{id}")
+    @GetMapping("/request/{id}")
     public ResponseEntity<String> requestFriend(@PathVariable Long id, @Auth AuthUser authUser) {
         friendService.requestFriend(id, authUser);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("친구 요청이 완료되었습니다.");
     }
 
-    @GetMapping("/accepts")
+    @GetMapping("/requests")
     public ResponseEntity<List<FriendSimpleResponseDto>> getFriendList(@Auth AuthUser authUser) {
         List<FriendSimpleResponseDto> friends = friendService.getFriendList(authUser);
         return ResponseEntity.ok().body(friends);
     }
 
-    @GetMapping("/accepts/{userId}")
-    public ResponseEntity<Void> getFriendList(@PathVariable Long userId, @Auth AuthUser authUser) {
-        friendService.acceptFriend(userId, authUser);
+    @GetMapping("/accept/{status}/{userId}")
+    public ResponseEntity<Void> acceptFriend(
+            @Auth AuthUser authUser,
+            @PathVariable String status,
+            @PathVariable Long userId) {
+        friendService.acceptFriend(status, userId, authUser);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/accepts/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteFriend(@Auth AuthUser authUser, @PathVariable Long userId) {
         friendService.deleteFriend(authUser, userId);
         return ResponseEntity.ok().build();
