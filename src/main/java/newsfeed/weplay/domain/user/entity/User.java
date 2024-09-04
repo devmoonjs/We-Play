@@ -1,18 +1,12 @@
 package newsfeed.weplay.domain.user.entity;
 
 import jakarta.persistence.*;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import newsfeed.weplay.domain.comment.entity.Comment;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import newsfeed.weplay.domain.friend.entity.Friend;
 import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 

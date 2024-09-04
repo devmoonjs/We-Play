@@ -42,7 +42,6 @@ public class FriendService {
             }
         }
 
-        // 저장
         User friendUser = userRepository.findById(id).orElseThrow();
         Friend newFriend = new Friend(user, friendUser);
         friendRepository.save(newFriend);
@@ -60,5 +59,19 @@ public class FriendService {
             friends.add(new FriendSimpleResponseDto(firendUser.getId(), firendUser.getUsername(), friend.getFriendStatus()));
         }
         return friends;
+    }
+
+    @Transactional
+    public void acceptFriend(Long userId, AuthUser authUser) {
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
+        List<Friend> friends = friendRepository.findFriendsByFriendUser(user);
+
+        for (Friend friend : friends) {
+            if (friend.getUser().getId().equals(userId)) {
+                friend.setFriendStatus(FriendStatusEnum.ACCEPT);
+                friendRepository.save(friend);
+                return;
+            }
+        }
     }
 }

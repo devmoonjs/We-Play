@@ -43,6 +43,8 @@ public class Comment extends BaseEntity {
 
     public Comment(CommentRequestDto requestDto, User user, Post post) {
         this.content = requestDto.getContent();
+        this.user = user;
+        this.post = post;
     }
 
     public void update(String content) {

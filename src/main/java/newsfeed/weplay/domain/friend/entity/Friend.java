@@ -29,4 +29,8 @@ public class Friend {
         this.friendUser = friendUser;
         this.friendStatus = FriendStatusEnum.REQUESTING;
     }
+
+    public void setFriendStatus(FriendStatusEnum statusEnum) {
+        this.friendStatus = statusEnum;
+    }
 }
