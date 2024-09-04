@@ -1,6 +1,7 @@
 package newsfeed.weplay.domain.user.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
@@ -11,14 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController()
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     // 유저 프로필 조회
     @GetMapping("")

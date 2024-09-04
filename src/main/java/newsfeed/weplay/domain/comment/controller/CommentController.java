@@ -3,6 +3,7 @@ package newsfeed.weplay.domain.comment.controller;
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
+import newsfeed.weplay.domain.comment.dto.request.CommentSaveRequestDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSaveResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSearchResponseDto;
@@ -22,7 +23,7 @@ public class CommentController {
 
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentSaveResponseDto> postComment(@PathVariable Long postId
-            , @RequestBody CommentRequestDto requestDto, @Auth AuthUser authUser) {
+            , @RequestBody CommentSaveRequestDto requestDto, @Auth AuthUser authUser) {
         return ResponseEntity.ok(commentService.postComment(postId, requestDto, authUser));
     }
 
