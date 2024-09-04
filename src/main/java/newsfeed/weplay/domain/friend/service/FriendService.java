@@ -3,6 +3,8 @@ package newsfeed.weplay.domain.friend.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.exception.EntityNotFoundException;
+import newsfeed.weplay.domain.exception.FriendRequestStatusException;
 import newsfeed.weplay.domain.friend.dto.response.FriendSimpleResponseDto;
 import newsfeed.weplay.domain.friend.entity.Friend;
 import newsfeed.weplay.domain.friend.entity.FriendStatusEnum;
@@ -25,26 +27,47 @@ public class FriendService {
 
     @Transactional
     public void requestFriend(Long id, AuthUser authUser) {
+        User user = findUserByEmail(authUser);
+        User friendUser = findUserById(id);
 
-        User user = userRepository.findByEmail(authUser.getEmail()).orElseThrow(
-                () -> new NullPointerException("해당 유저가 없습니다.")
-        );
-
-        List<Friend> users = user.getUsers();
-
-        for (Friend friend : users) {
-            if (friend.getFriendUser().getId().equals(id)) {
-                if (friend.getFriendStatus() == FriendStatusEnum.ACCEPT) {
-                    throw new RuntimeException("이미 친구입니다.");
-                } else if (friend.getFriendStatus() == FriendStatusEnum.REQUESTING) {
-                    throw new RuntimeException("이미 친구 요청 보낸 유저입니다");
-                }
-            }
-        }
-
-        User friendUser = userRepository.findById(id).orElseThrow();
+        validateFriendRequest(id, user);
+//        List<Friend> users = user.getUsers();
+//
+//        for (Friend friend : users) {
+//            if (friend.getFriendUser().getId().equals(id)) {
+//                if (friend.getFriendStatus() == FriendStatusEnum.ACCEPT) {
+//                    throw new RuntimeException("이미 친구입니다.");
+//                } else if (friend.getFriendStatus() == FriendStatusEnum.REQUESTING) {
+//                    throw new RuntimeException("이미 친구 요청 보낸 유저입니다");
+//                }
+//            }
+//        }
         Friend newFriend = new Friend(user, friendUser);
         friendRepository.save(newFriend);
+    }
+
+    private void validateFriendRequest(Long friendId, User user) {
+        user.getUsers().stream()
+                .filter(friend -> friend.getFriendUser().getId().equals(friendId))
+                .findFirst()
+                .ifPresent(friend -> {
+                    if (friend.getFriendStatus() == FriendStatusEnum.ACCEPT) {
+                        throw new FriendRequestStatusException("이미 친구입니다.");
+                    } else if (friend.getFriendStatus() == FriendStatusEnum.REQUESTING) {
+                        throw new FriendRequestStatusException("이미 요청을 보낸 유저입니다.");
+                    }
+                });
+    }
+
+    private User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("해당 유저가 없습니다."));
+    }
+
+    private User findUserByEmail(AuthUser authUser) {
+        return userRepository.findByEmail(authUser.getEmail()).orElseThrow(
+                () -> new EntityNotFoundException("해당 유저가 없습니다.")
+        );
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +88,7 @@ public class FriendService {
     public void acceptFriend(String status, Long userId, AuthUser authUser) {
         FriendStatusEnum statusEnum = convertToEnum(status);
 
-        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
+        User user = findUserById(authUser.getUserId());
         List<Friend> friends = friendRepository.findFriendsByFriendUser(user);
 
         for (Friend friend : friends) {
@@ -79,8 +102,8 @@ public class FriendService {
 
     @Transactional
     public void deleteFriend(AuthUser authUser, Long friendId) {
-        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
-        User friendUser = userRepository.findById(friendId).orElseThrow();
+        User user = findUserById(authUser.getUserId());
+        User friendUser = findUserById(friendId);
 
         friendRepository.deleteFriendByFriendUserAndUser(friendUser, user);
     }
