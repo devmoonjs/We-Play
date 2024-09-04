@@ -1,7 +1,9 @@
 package newsfeed.weplay.domain.user.service;
 
+import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.config.PasswordEncoder;
+import newsfeed.weplay.domain.exception.EntityAlreadyExistsException;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
 import newsfeed.weplay.domain.user.dto.response.UserResponseDto;
@@ -13,15 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     private User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("등록된 사용자가 없습니다."));
@@ -58,13 +56,13 @@ public class UserService {
         // 닉네임 중복 체크
         Optional<User> checkUsername = userRepository.findByUsername(username);
         if(!Objects.equals(findUser.getUsername(), username) && checkUsername.isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+            throw new EntityAlreadyExistsException("이미 존재하는 닉네임입니다.");
         }
 
         // 이메일 중복 체크
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if(!Objects.equals(findUser.getEmail(), email) && checkEmail.isPresent()) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new EntityAlreadyExistsException("이미 가입된 이메일입니다.");
         }
 
         // 새로운 정보로 유저 생성
