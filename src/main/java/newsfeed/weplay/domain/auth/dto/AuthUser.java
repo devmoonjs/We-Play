@@ -4,7 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AuthUser {
-
     private Long userId;
     private final String username;
     private final String email;

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import newsfeed.weplay.domain.comment.entity.Comment;
+import newsfeed.weplay.domain.common.entity.BaseEntity;
 import newsfeed.weplay.domain.friend.entity.Friend;
 import newsfeed.weplay.domain.user.dto.request.SignupRequestDto;
 
@@ -13,11 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class User extends BaseEntity {
     @Column(name = "username", nullable = false)
     private String username;
 
