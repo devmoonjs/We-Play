@@ -22,19 +22,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    // 유저 프로필 조회
+    @GetMapping("")
     public ResponseEntity<UserResponseDto> getUserProfile(@Auth AuthUser authUser) {
         return new ResponseEntity<>(userService.getUser(authUser), HttpStatus.OK);
     }
 
-    @PutMapping("/")
+    // 유저 프로필 업데이트
+    @PutMapping("")
     public ResponseEntity<String> updateUserProfile(@Auth AuthUser authUser,
                                                     @Valid @RequestBody UpdateProfileRequestDto requestDto) {
         userService.updateUserProfile(authUser, requestDto);
         return new ResponseEntity<>("update success", HttpStatus.OK);
     }
 
-    @DeleteMapping("/")
+    // 유저 탈퇴
+    @PostMapping("")
     public ResponseEntity<String> deleteUser(@Auth AuthUser authUser, @Valid @RequestBody DeleteUserRequestDto requestDto) {
         userService.deleteUser(authUser, requestDto);
         return new ResponseEntity<>("delete success", HttpStatus.OK);

@@ -46,10 +46,8 @@ public class JwtUtil {
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(userName) // 사용자 식별값
-                        .claim("userId", userId)
-                        .claim("userName", userName)
                         .claim("email", email)
-                        .claim("userId", String.valueOf(userId))
+                        .claim("userId", userId)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)

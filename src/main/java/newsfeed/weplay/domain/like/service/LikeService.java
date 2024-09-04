@@ -29,9 +29,11 @@ public class LikeService {
         User user = userRepository.findById(postLikeRequestDto.getUserId()).orElseThrow(() -> new NullPointerException());
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("해당 게시글이 존재하지 않습니다."));
         //게시글의 유저가 있는지 확인 그리고 해당게시글의 유저id와 좋아요 하려는 유저가 같은 사람인지 확인하는 조건문
-        if(post.getUser() != null && ObjectUtils.nullSafeEquals(user.getId(),post.getUser())) {
+        if(post.getUser() != null && ObjectUtils.nullSafeEquals(user.getId(), post.getUser())) {
             throw new NullPointerException("자신이 작성한 게시글에는 좋아요를 누를 수 없습니다.");
-        }//같은사람이 아니라면 like를 저장
+        }
+
+        //같은사람이 아니라면 like를 저장
         likesRepository.save(new Likes(user,post));
         post.increaseLikeCount();
     }
@@ -43,6 +45,8 @@ public class LikeService {
         User user = userRepository.findById(postLikeRequestDto.getUserId()).orElseThrow(() -> new NullPointerException());
         //유저와 게시글 확인해서 해당 유저가 좋아요했는지 확인
         Likes like = likesRepository.findByUserAndPost(user,post).orElseThrow(() -> new NullPointerException("좋아요를 하지 않았습니다."));
+
+
 
         likesRepository.delete(like);
         post.decreaseLikeCount();
