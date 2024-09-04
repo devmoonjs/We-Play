@@ -1,5 +1,7 @@
 package newsfeed.weplay.domain.post.controller;
 
+import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.service.PostService;
