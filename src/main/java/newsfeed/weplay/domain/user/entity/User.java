@@ -46,6 +46,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "friendUser")
     List<Friend> friends = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserNotifications> userNotifications = new ArrayList<>();
+
     public User(String username, String email, String password, String imgUrl, String location, Integer age) {
         this.username = username;
         this.email = email;
