@@ -40,6 +40,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>(); // 댓글 연결
 
+    @Column(name = "comments", nullable = false)
+    private int commentCount = 0; //좋아요 수 세기
+
     public void setUser(User user) {
         this.user = user;
     }
