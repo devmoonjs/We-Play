@@ -3,6 +3,7 @@ package newsfeed.weplay.domain.comment.controller;
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
+import newsfeed.weplay.domain.comment.dto.request.CommentSaveRequestDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSaveResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSearchResponseDto;
@@ -22,7 +23,7 @@ public class CommentController {
 
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentSaveResponseDto> postComment(@PathVariable Long postId
-            , @RequestBody CommentRequestDto requestDto, @Auth AuthUser authUser) {
+            , @RequestBody CommentSaveRequestDto requestDto, @Auth AuthUser authUser) {
         return ResponseEntity.ok(commentService.postComment(postId, requestDto, authUser));
     }
 
@@ -36,14 +37,19 @@ public class CommentController {
         return ResponseEntity.ok(commentService.searchUserComment(userId));
     }
 
-    @PutMapping("comments/{commentId}")
+    @PutMapping("/comments/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId
             , @RequestBody CommentRequestDto requestDto, @Auth AuthUser authUser) {
         return ResponseEntity.ok(commentService.updateComment(commentId, requestDto, authUser));
     }
 
-    @DeleteMapping("comments/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId, @Auth AuthUser authUser) {
         return commentService.deleteComment(commentId, authUser);
+    }
+
+    @GetMapping("/comments/{commentId}/reports")
+    public ResponseEntity<String> reportComment(@PathVariable Long commentId, @Auth AuthUser authUser, @RequestBody CommentRequestDto requestDto){
+        return commentService.reportComment(commentId, authUser, requestDto);
     }
 }

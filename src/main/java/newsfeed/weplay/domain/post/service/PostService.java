@@ -79,7 +79,10 @@ public class PostService {
         return posts.map(PostResponseDto::new);
     }
 
+    @Transactional
     public PostResponseDto getPostById(Long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+        post.increaseViewCount();
         return new PostResponseDto(postRepository.findById(id).orElseThrow());
     }
 
