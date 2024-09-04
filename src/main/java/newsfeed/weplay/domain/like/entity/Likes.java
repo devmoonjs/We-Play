@@ -21,11 +21,11 @@ public class Likes extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id" , nullable = false)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id",nullable = false)
+    @JoinColumn(name = "comment_id")
     private Comment comment;
 
     public Likes(User user, Post post){
