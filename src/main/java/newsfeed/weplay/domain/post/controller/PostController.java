@@ -48,8 +48,8 @@ public class PostController {
 
     // 게시물 생성
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@Auth AuthUser authUser, @RequestBody PostRequestDto postRequestDto) {
-        PostResponseDto createdPost = postService.createPost(authUser, postRequestDto);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto postRequestDto) {
+        PostResponseDto createdPost = postService.createPost(postRequestDto);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 

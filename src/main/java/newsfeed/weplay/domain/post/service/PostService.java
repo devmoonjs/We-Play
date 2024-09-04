@@ -1,6 +1,7 @@
 package newsfeed.weplay.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
+import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.repository.PostRepository;
