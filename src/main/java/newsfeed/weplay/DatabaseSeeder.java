@@ -8,7 +8,7 @@ import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
 

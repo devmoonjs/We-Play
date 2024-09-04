@@ -7,9 +7,14 @@ import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.service.PostService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -22,7 +27,7 @@ public class PostController {
     @GetMapping("/newsfeed")
     public ResponseEntity<Page<PostResponseDto>> getNewsFeed(@Auth AuthUser authUser,
                                                              @RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "10") int size) {
+                                                             @RequestParam(defaultValue = "5") int size) {
         Page<PostResponseDto> posts = postService.getNewsFeed(authUser, page, size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }

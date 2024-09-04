@@ -37,14 +37,14 @@ public class Post extends BaseEntity {
     @Column(name = "likes", nullable = false)
     private int likeCount = 0; //좋아요 수 세기
 
+    @Column(name = "comments", nullable = false)
+    private int commentCount = 0; //댓글 수 세기
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>(); // 댓글 연결
 
     @Column(name = "views")
     private int viewCount = 0; // 조회수
-
-    @Column(name = "comments", nullable = false)
-    private int commentCount = this.commentList.size(); // 댓글 수 세기
 
     public void setUser(User user) {
         this.user = user;
