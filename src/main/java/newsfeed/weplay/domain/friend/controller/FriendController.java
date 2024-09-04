@@ -1,6 +1,5 @@
 package newsfeed.weplay.domain.friend.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RequiredArgsConstructor
 @RestController
@@ -31,15 +29,15 @@ public class FriendController {
         return ResponseEntity.ok().body(friends);
     }
 
-    /*
-        승인 ->
-        1. 친구신청 받은 신청 목록을 리스트로 가져와서
-        2.
-     */
-
     @GetMapping("/accepts/{userId}")
     public ResponseEntity<Void> getFriendList(@PathVariable Long userId, @Auth AuthUser authUser) {
         friendService.acceptFriend(userId, authUser);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/accepts/{userId}")
+    public ResponseEntity<Void> deleteFriend(@Auth AuthUser authUser, @PathVariable Long userId) {
+        friendService.deleteFriend(authUser, userId);
         return ResponseEntity.ok().build();
     }
 }

@@ -74,4 +74,15 @@ public class FriendService {
             }
         }
     }
+
+    @Transactional
+    public void deleteFriend(AuthUser authUser, Long friendId) {
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
+        log.info("UserId = {}", user.getId());
+
+        User friendUser = userRepository.findById(friendId).orElseThrow();
+        log.info("friendUserId = {}", friendUser.getId());
+
+        friendRepository.deleteFriendByFriendUserAndUser(friendUser, user);
+    }
 }
