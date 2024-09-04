@@ -11,6 +11,7 @@ import newsfeed.weplay.domain.like.entity.Likes;
 import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.tag.entity.Tag;
 import newsfeed.weplay.domain.user.entity.User;
+import newsfeed.weplay.domain.user.entity.UserNotifications;
 
 import java.util.ArrayList;
 import java.util.List;

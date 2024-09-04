@@ -7,8 +7,6 @@ import newsfeed.weplay.domain.comment.entity.Comment;
 import newsfeed.weplay.domain.common.entity.BaseEntity;
 import newsfeed.weplay.domain.user.entity.User;
 
-import java.util.Optional;
-
 @Entity
 @Getter
 @NoArgsConstructor

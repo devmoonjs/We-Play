@@ -2,16 +2,23 @@ package newsfeed.weplay.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
+import newsfeed.weplay.domain.comment.entity.Comment;
+import newsfeed.weplay.domain.comment.repository.CommentRepository;
 import newsfeed.weplay.domain.config.PasswordEncoder;
 import newsfeed.weplay.domain.exception.EntityAlreadyExistsException;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
 import newsfeed.weplay.domain.user.dto.response.UserResponseDto;
 import newsfeed.weplay.domain.user.entity.User;
+import newsfeed.weplay.domain.user.entity.UserNotifications;
+import newsfeed.weplay.domain.user.repository.UserNotificationsRepository;
 import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,6 +27,8 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserNotificationsRepository userNotificationsRepository;
+    private final CommentRepository commentRepository;
 
     private User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("등록된 사용자가 없습니다."));
@@ -95,5 +104,16 @@ public class UserService {
         user.setDeleted(true);
 
         userRepository.save(user);
+    }
+
+    public List<CommentResponseDto> getUserNotifications(AuthUser authUser) {
+        List<UserNotifications> list = userNotificationsRepository.findByUserIdAndIsNotificationReadFalse(authUser.getUserId());
+        List<CommentResponseDto> commentList = new ArrayList<>();
+        for(UserNotifications userNotifications : list) {
+            Comment comment = commentRepository.findById(userNotifications.getCommentId()).orElseThrow();
+            CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
+            commentList.add(commentResponseDto);
+        }
+        return commentList;
     }
 }

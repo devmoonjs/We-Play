@@ -16,11 +16,14 @@ import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.tag.entity.Tag;
 import newsfeed.weplay.domain.tag.repository.TagRepository;
 import newsfeed.weplay.domain.user.entity.User;
+import newsfeed.weplay.domain.user.entity.UserNotifications;
+import newsfeed.weplay.domain.user.repository.UserNotificationsRepository;
 import newsfeed.weplay.domain.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.Notification;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,8 +37,10 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final UserNotificationsRepository userNotificationsRepository;
     private final ReportRepository reportRepository;
     private final ReportService reportService;
+
 
     @Transactional
     public CommentSaveResponseDto postComment(Long postId, CommentSaveRequestDto requestDto, AuthUser authUser) {
@@ -48,11 +53,18 @@ public class CommentService {
 
         Comment saveComment = commentRepository.save(comment);
 
+        // 태그 생성, 유저 알림 생성
         if(requestDto.getTaggedUserIdList().length != 0) {
             for (Long userId : requestDto.getTaggedUserIdList()) {
                 User taggedUser = userRepository.findById(userId).orElseThrow();
+
+                // 태그 생성
                 Tag tag = new Tag(user, taggedUser, comment);
                 tagRepository.save(tag);
+
+                // 유저 알림 생성
+                UserNotifications userNotifications = new UserNotifications(taggedUser, saveComment.getId());
+                userNotificationsRepository.save(userNotifications);
             }
         }
         post.increaseCommentCount();

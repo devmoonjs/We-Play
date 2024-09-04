@@ -3,6 +3,7 @@ package newsfeed.weplay.domain.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.user.dto.request.DeleteUserRequestDto;
 import newsfeed.weplay.domain.user.dto.request.UpdateProfileRequestDto;
@@ -11,6 +12,8 @@ import newsfeed.weplay.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController()
@@ -37,5 +40,11 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@Auth AuthUser authUser, @Valid @RequestBody DeleteUserRequestDto requestDto) {
         userService.deleteUser(authUser, requestDto);
         return new ResponseEntity<>("delete success", HttpStatus.OK);
+    }
+
+    // 유저 알림 조회
+    @GetMapping("/notification")
+    public ResponseEntity<List<CommentResponseDto>> getUserNotifications(@Auth AuthUser authUser) {
+        return new ResponseEntity<>(userService.getUserNotifications(authUser), HttpStatus.OK);
     }
 }
