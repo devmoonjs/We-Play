@@ -46,9 +46,6 @@ public class Post extends BaseEntity {
     @Column(name = "views")
     private int viewCount = 0; // 조회수
 
-    @Column(name = "comments", nullable = false)
-    private int commentCount = this.commentList.size(); // 댓글 수 세기
-
     public void setUser(User user) {
         this.user = user;
     }
