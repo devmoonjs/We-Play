@@ -1,11 +1,11 @@
 package newsfeed.weplay.domain.post.controller;
 
+import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/posts")
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
-
-    @Autowired
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     // 뉴스피드 조회 (현재 사용자만의 게시물을 최신순으로 조회)
     @GetMapping("/newsfeed")
@@ -33,19 +29,18 @@ public class PostController {
 
     // 모든 게시물 조회 (페이징)
     @GetMapping
-    public ResponseEntity<Page<PostResponseDto>> getAllPosts(@Auth AuthUser authUser,
-                                                             @RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<PostResponseDto>> getAllPosts(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "10") int size) {
-        Page<PostResponseDto> posts = postService.getAllPosts(authUser, page, size);
+        Page<PostResponseDto> posts = postService.getAllPosts(page, size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     // 특정 게시물 조회
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDto> getPostById(@Auth AuthUser authUser, @PathVariable Long id) {
-        return postService.getPostById(authUser, id)
-                .map(post -> new ResponseEntity<>(post, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long id) {
+        return new ResponseEntity<>(postService.getPostById(id),HttpStatus.OK);
+//                .map(post -> new ResponseEntity<>(post, HttpStatus.OK))
+//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // 게시물 생성

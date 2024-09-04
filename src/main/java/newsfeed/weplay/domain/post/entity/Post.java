@@ -18,9 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Post extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 게시물 ID
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // 작성자 정보
@@ -34,18 +31,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String city; // 지역
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt; // 게시물 생성 일시
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt; // 게시물 수정 일시
-
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-        updatedAt = createdAt;
-    }
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Likes> likes = new ArrayList<>(); //좋아요 연결
 
@@ -54,14 +39,6 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>(); // 댓글 연결
-
-    @Column(name = "comments", nullable = false)
-    private int commentCount = 0; //좋아요 수 세기
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     public void setUser(User user) {
         this.user = user;
@@ -79,20 +56,8 @@ public class Post extends BaseEntity {
         this.city = city;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public void setCommentsList(List<Comment> commentList) {
         this.commentList = commentList;
-    }
-
-    public void serCommentsCount(int commentsCount){
-        this.commentCount = commentsCount;
     }
 
     public void update(Post updatedPost) {
