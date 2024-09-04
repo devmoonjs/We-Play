@@ -39,8 +39,6 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long id) {
         return new ResponseEntity<>(postService.getPostById(id),HttpStatus.OK);
-//                .map(post -> new ResponseEntity<>(post, HttpStatus.OK))
-//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // 게시물 생성

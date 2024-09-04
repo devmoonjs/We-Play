@@ -22,10 +22,6 @@ import java.util.List;
 @Getter
 public class Comment extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false)
     private String content;
 
@@ -46,6 +42,12 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tag> tagList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reportList = new ArrayList<>();
+
+    @Column(name = "reports", nullable = false)
+    private int reportCount;
+
     public Comment(CommentSaveRequestDto requestDto, User user, Post post) {
         this.content = requestDto.getContent();
         this.user = user;
@@ -56,11 +58,16 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
-    public void increaseLikeCount(){
+    public void increaseLikeCount() {
         this.likeCount++; //좋아요 증가
     }
 
-    public void decreaseLikeCount(){
+    public void decreaseLikeCount() {
         this.likeCount--; //좋아요 감소
     }
+
+    public void increaseReportCount() {
+        this.reportCount++;
+    }
+
 }
