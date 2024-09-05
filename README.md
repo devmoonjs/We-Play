@@ -1,4 +1,6 @@
-<h1 style="text-align: center;">🏆 We - Play <br><span style="font-size: large;">빠르게 만나는 소모임 동아리</span></h1>
+
+<div align="center"><h1><img src="images/we_play로고.png" alt="로고" width="70"/><br>
+ We - Play <br><font size="4">빠르게 만나는 소모임 동아리</font></h1></div>
 
 <h2>구현한 기능</h2>
 
