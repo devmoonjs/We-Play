@@ -61,7 +61,6 @@
 
 ![comments23.png](images/comments23.png) 
 
-<h2>API 명세서</h2>
 # API 명세서
 
 ## 1. 유저 API
