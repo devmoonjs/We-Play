@@ -4,6 +4,8 @@
 
 <p>와이어프레임</p>
 
+![wierframe.jpg](images/wierframe.jpg)
+
 <p>ERD</p>
 <img src="https://github.com/user-attachments/assets/f7fc33d4-b241-4607-93c1-f1afa225ed9c" alt="ERD"/>
 
