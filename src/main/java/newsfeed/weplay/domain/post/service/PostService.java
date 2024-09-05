@@ -72,7 +72,7 @@ public class PostService {
     @Transactional
     public PostResponseDto getPostById(Long id) {
         Post post = postRepository.findById(id).orElseThrow();
-        post.increaseViewCount();
+        post.increaseViewCount(); //조회수 증가를 카운트 하기 위한 해당아이디의 게시글 생성
         return new PostResponseDto(postRepository.findById(id).orElseThrow());
     }
 
