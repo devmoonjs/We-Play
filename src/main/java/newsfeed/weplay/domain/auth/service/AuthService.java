@@ -1,7 +1,5 @@
 package newsfeed.weplay.domain.auth.service;
 
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import newsfeed.weplay.domain.config.PasswordEncoder;

@@ -2,8 +2,9 @@ package newsfeed.weplay.domain.comment.dto.response;
 
 import lombok.Getter;
 import newsfeed.weplay.domain.comment.entity.Comment;
+import java.time.LocalDateTime;
 
-import java.time.LocalDateTime;@Getter
+@Getter
 public class CommentSaveResponseDto {
     private final Long id;
     private final String content;
