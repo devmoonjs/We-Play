@@ -3,6 +3,7 @@ package newsfeed.weplay.domain.friend.controller;
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
+import newsfeed.weplay.domain.friend.dto.response.FriendSendDto;
 import newsfeed.weplay.domain.friend.dto.response.FriendSimpleResponseDto;
 import newsfeed.weplay.domain.friend.service.FriendService;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,8 @@ public class FriendController {
     }
 
     @GetMapping("/requests")
-    public ResponseEntity<List<FriendSimpleResponseDto>> getFriendList(@Auth AuthUser authUser) {
-        List<FriendSimpleResponseDto> friends = friendService.getFriendList(authUser);
-        return ResponseEntity.ok().body(friends);
+    public ResponseEntity<FriendSendDto> getFriendList(@Auth AuthUser authUser) {
+        return ResponseEntity.ok().body(friendService.getFriendList(authUser));
     }
 
     @GetMapping("/{status}/{userId}")

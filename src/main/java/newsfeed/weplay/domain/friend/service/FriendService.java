@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.exception.EntityNotFoundException;
 import newsfeed.weplay.domain.exception.FriendRequestStatusException;
+import newsfeed.weplay.domain.friend.dto.response.FriendSendDto;
 import newsfeed.weplay.domain.friend.dto.response.FriendSimpleResponseDto;
 import newsfeed.weplay.domain.friend.entity.Friend;
 import newsfeed.weplay.domain.friend.entity.FriendStatusEnum;
@@ -49,17 +50,26 @@ public class FriendService {
     }
 
     @Transactional(readOnly = true)
-    public List<FriendSimpleResponseDto> getFriendList(AuthUser authuser) {
+    public FriendSendDto getFriendList(AuthUser authuser) {
         User user = userRepository.findByEmail(authuser.getEmail()).orElseThrow();
 
-        List<Friend> users = user.getUsers();
-        List<FriendSimpleResponseDto> friends = new ArrayList<>();
+        List<Friend> requestUsers = user.getUsers();
+        List<Friend> responseUsers = user.getFriends();
 
-        for (Friend friend : users) {
-            User firendUser = friend.getFriendUser();
-            friends.add(new FriendSimpleResponseDto(firendUser.getId(), firendUser.getUsername(), friend.getFriendStatus()));
+        List<FriendSimpleResponseDto> requestUserDtos = new ArrayList<>();
+        List<FriendSimpleResponseDto> responseUserDtos = new ArrayList<>();
+
+        for (Friend friend : requestUsers) {
+            User friendUser = friend.getFriendUser();
+            requestUserDtos.add(new FriendSimpleResponseDto(friendUser.getId(), friendUser.getUsername(), friend.getFriendStatus()));
         }
-        return friends;
+
+        for (Friend friend : responseUsers) {
+            User responseUser = friend.getUser();
+            responseUserDtos.add(new FriendSimpleResponseDto(responseUser.getId(), responseUser.getUsername(), friend.getFriendStatus()));
+        }
+
+        return new FriendSendDto(requestUserDtos, responseUserDtos);
     }
 
     @Transactional
