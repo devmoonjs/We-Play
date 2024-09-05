@@ -22,4 +22,9 @@ public class GlobalException {
     public ResponseEntity<String> handlerEntityAlreadyExistsException(EntityAlreadyExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
+
+    @ExceptionHandler(DeletePostException.class)
+    public ResponseEntity<String> handlerDeletePostException(DeletePostException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 }

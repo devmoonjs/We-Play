@@ -12,5 +12,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // 뉴스피드 조회(최신순)
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
+    void deletePostByIdAndUser(Long id, User user);
+
     List<Post> findPostsByUser(User user);
 }

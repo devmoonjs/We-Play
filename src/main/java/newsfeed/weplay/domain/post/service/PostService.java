@@ -3,6 +3,8 @@ package newsfeed.weplay.domain.post.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.exception.DeletePostException;
+import newsfeed.weplay.domain.exception.EntityNotFoundException;
 import newsfeed.weplay.domain.friend.entity.Friend;
 import newsfeed.weplay.domain.friend.entity.FriendStatusEnum;
 import newsfeed.weplay.domain.friend.repository.FriendRepository;
@@ -71,14 +73,15 @@ public class PostService {
 
     @Transactional
     public PostResponseDto getPostById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow();
+        Post post = getPost(id);
+
         post.increaseViewCount(); //조회수 증가를 카운트 하기 위한 해당아이디의 게시글 생성
         return new PostResponseDto(postRepository.findById(id).orElseThrow());
     }
 
     @Transactional
     public PostResponseDto createPost(AuthUser authUser, PostRequestDto postRequestDto) {
-        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
+        User user = getUser(authUser);
         Post post = convertToEntity(postRequestDto);
         post.setUser(user);
         Post createdPost = postRepository.save(post);
@@ -98,13 +101,31 @@ public class PostService {
             Post updatedPost = postRepository.save(post);
             return new PostResponseDto(updatedPost);
         } else {
-            throw new RuntimeException("Post not found with id " + id);
+            throw new EntityNotFoundException("게시글이 없습니다.");
         }
     }
 
     @Transactional
     public void deletePost(AuthUser authUser, Long id) {
-        postRepository.deleteById(id);
+        User user = getUser(authUser);
+
+        try {
+            postRepository.deletePostByIdAndUser(id, user);
+        } catch (Exception e) {
+            throw new DeletePostException("본인 게시글만 삭제 가능합니다.");
+        }
+    }
+
+    private User getUser(AuthUser authUser) {
+        return userRepository.findById(authUser.getUserId()).orElseThrow(
+                () -> new EntityNotFoundException("게시글 작성자가 존재하지 않습니다.")
+        );
+    }
+
+    private Post getPost(Long id) {
+        return postRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("게시글이 없습니다.")
+        );
     }
 
     private Post convertToEntity(PostRequestDto dto) {
