@@ -12,6 +12,7 @@ import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.user.entity.User;
 import newsfeed.weplay.domain.user.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
