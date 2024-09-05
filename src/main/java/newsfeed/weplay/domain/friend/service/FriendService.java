@@ -31,17 +31,6 @@ public class FriendService {
         User friendUser = findUserById(id);
 
         validateFriendRequest(id, user);
-//        List<Friend> users = user.getUsers();
-//
-//        for (Friend friend : users) {
-//            if (friend.getFriendUser().getId().equals(id)) {
-//                if (friend.getFriendStatus() == FriendStatusEnum.ACCEPT) {
-//                    throw new RuntimeException("이미 친구입니다.");
-//                } else if (friend.getFriendStatus() == FriendStatusEnum.REQUESTING) {
-//                    throw new RuntimeException("이미 친구 요청 보낸 유저입니다");
-//                }
-//            }
-//        }
         Friend newFriend = new Friend(user, friendUser);
         friendRepository.save(newFriend);
     }
@@ -57,17 +46,6 @@ public class FriendService {
                         throw new FriendRequestStatusException("이미 요청을 보낸 유저입니다.");
                     }
                 });
-    }
-
-    private User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("해당 유저가 없습니다."));
-    }
-
-    private User findUserByEmail(AuthUser authUser) {
-        return userRepository.findByEmail(authUser.getEmail()).orElseThrow(
-                () -> new EntityNotFoundException("해당 유저가 없습니다.")
-        );
     }
 
     @Transactional(readOnly = true)
@@ -93,7 +71,7 @@ public class FriendService {
 
         for (Friend friend : friends) {
             if (friend.getUser().getId().equals(userId)) {
-                friend.setFriendStatus(statusEnum);
+                friend.changeFriendStatus(statusEnum);
                 friendRepository.save(friend);
                 return;
             }
@@ -108,11 +86,21 @@ public class FriendService {
         friendRepository.deleteFriendByFriendUserAndUser(friendUser, user);
     }
 
-    public FriendStatusEnum convertToEnum(String status) {
+    private FriendStatusEnum convertToEnum(String status) {
         try {
             return FriendStatusEnum.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("존재하지 않은 상태 요청 : " + status);
         }
+    }
+
+    private User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("해당 유저가 없습니다."));
+    }
+
+    private User findUserByEmail(AuthUser authUser) {
+        return userRepository.findByEmail(authUser.getEmail()).orElseThrow(
+                () -> new EntityNotFoundException("해당 유저가 없습니다."));
     }
 }

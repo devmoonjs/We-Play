@@ -6,9 +6,9 @@ import newsfeed.weplay.domain.user.entity.User;
 
 @Getter
 public class FriendSimpleResponseDto {
-    private Long userId;
-    private String userName;
-    private FriendStatusEnum status;
+    private final Long userId;
+    private final String userName;
+    private final FriendStatusEnum status;
 
     public FriendSimpleResponseDto(Long userId, String userName, FriendStatusEnum status) {
         this.userId = userId;

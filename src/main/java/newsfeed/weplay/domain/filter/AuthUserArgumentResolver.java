@@ -21,8 +21,6 @@ import java.security.Key;
 @Slf4j
 public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private Key key;
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasAuthAnnotation = parameter.getParameterAnnotation(Auth.class) != null;
@@ -32,7 +30,6 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
         if (hasAuthAnnotation != isAuthUserType) {
             throw new IllegalArgumentException("@Auth와 AuthUser 타입은 함께 사용되어야 합니다.");
         }
-
         return hasAuthAnnotation;
     }
 

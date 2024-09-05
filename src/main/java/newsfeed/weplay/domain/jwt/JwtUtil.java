@@ -42,7 +42,6 @@ public class JwtUtil {
     public String createToken(Long userId, String userName, String email) {
         Date date = new Date();
 
-
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(userName) // 사용자 식별값

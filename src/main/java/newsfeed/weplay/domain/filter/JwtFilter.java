@@ -43,7 +43,7 @@ public class JwtFilter implements Filter {
         }
 
         log.info("===== 필터를 시작합니다. =====");
-        String bearerJwt = httpRequest.getHeader(AUTHORIZATION); // 헤더에서 jWT 가져오기
+        String bearerJwt = httpRequest.getHeader(AUTHORIZATION);
 
         if (bearerJwt == null || !bearerJwt.startsWith("Bearer")) {
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "JWT 토큰이 필요합니다.");
@@ -52,7 +52,6 @@ public class JwtFilter implements Filter {
 
         String jwt = jwtUtil.subStringToken(bearerJwt);
 
-        // 유저가 존재할 경우 필터 허용
         try {
             Claims claims = jwtUtil.getUserInfoFromToken(jwt);
 

@@ -7,14 +7,9 @@ import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
 import newsfeed.weplay.domain.post.service.PostService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -67,11 +62,7 @@ public class PostController {
     // 게시물 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@Auth AuthUser authUser, @PathVariable Long id) {
-        try {
-            postService.deletePost(authUser, id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        postService.deletePost(authUser, id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
