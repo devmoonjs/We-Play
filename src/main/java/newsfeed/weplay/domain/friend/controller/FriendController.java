@@ -30,17 +30,17 @@ public class FriendController {
     }
 
     @GetMapping("/{status}/{userId}")
-    public ResponseEntity<Void> acceptFriend(
+    public ResponseEntity<String> acceptFriend(
             @Auth AuthUser authUser,
             @PathVariable String status,
             @PathVariable Long userId) {
         friendService.acceptFriend(status, userId, authUser);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("친구 상태가 변경되었습니다.");
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteFriend(@Auth AuthUser authUser, @PathVariable Long userId) {
+    public ResponseEntity<String> deleteFriend(@Auth AuthUser authUser, @PathVariable Long userId) {
         friendService.deleteFriend(authUser, userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("친구 삭제가 완료되었습니다.");
     }
 }
