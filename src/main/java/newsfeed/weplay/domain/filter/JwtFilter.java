@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import newsfeed.weplay.domain.jwt.JwtUtil;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j(topic = "JwtFilter")
 @RequiredArgsConstructor

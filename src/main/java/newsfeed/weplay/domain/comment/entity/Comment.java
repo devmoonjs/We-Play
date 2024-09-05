@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
 import newsfeed.weplay.domain.comment.dto.request.CommentSaveRequestDto;
 import newsfeed.weplay.domain.common.entity.BaseEntity;
 import newsfeed.weplay.domain.like.entity.Likes;
 import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.tag.entity.Tag;
 import newsfeed.weplay.domain.user.entity.User;
-import newsfeed.weplay.domain.user.entity.UserNotifications;
 
 import java.util.ArrayList;
 import java.util.List;

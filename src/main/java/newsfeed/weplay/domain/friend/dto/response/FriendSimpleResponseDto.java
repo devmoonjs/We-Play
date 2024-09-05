@@ -2,7 +2,6 @@ package newsfeed.weplay.domain.friend.dto.response;
 
 import lombok.Getter;
 import newsfeed.weplay.domain.friend.entity.FriendStatusEnum;
-import newsfeed.weplay.domain.user.entity.User;
 
 @Getter
 public class FriendSimpleResponseDto {
