@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
 import newsfeed.weplay.domain.comment.dto.request.CommentSaveRequestDto;
-import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
-import newsfeed.weplay.domain.comment.dto.response.CommentSaveResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSearchResponseDto;
 import newsfeed.weplay.domain.comment.entity.Comment;
 import newsfeed.weplay.domain.comment.entity.Report;
 import newsfeed.weplay.domain.comment.repository.CommentRepository;
 import newsfeed.weplay.domain.comment.repository.ReportRepository;
+import newsfeed.weplay.domain.exception.EntityAlreadyExistsException;
+import newsfeed.weplay.domain.exception.EntityNotFoundException;
+import newsfeed.weplay.domain.exception.UnauthorizedAccessException;
 import newsfeed.weplay.domain.post.entity.Post;
 import newsfeed.weplay.domain.post.repository.PostRepository;
 import newsfeed.weplay.domain.tag.entity.Tag;
@@ -19,7 +20,6 @@ import newsfeed.weplay.domain.user.entity.User;
 import newsfeed.weplay.domain.user.entity.UserNotifications;
 import newsfeed.weplay.domain.user.repository.UserNotificationsRepository;
 import newsfeed.weplay.domain.user.repository.UserRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +41,7 @@ public class CommentService {
 
 
     @Transactional
-    public CommentSaveResponseDto postComment(Long postId, CommentSaveRequestDto requestDto, AuthUser authUser) {
+    public void postComment(Long postId, CommentSaveRequestDto requestDto, AuthUser authUser) {
 
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
 
@@ -66,9 +66,6 @@ public class CommentService {
             }
         }
         post.increaseCommentCount();
-
-
-        return new CommentSaveResponseDto(saveComment);
     }
 
     public List<CommentSearchResponseDto> searchPostComment(Long postId) {
@@ -80,7 +77,7 @@ public class CommentService {
 
     public List<CommentSearchResponseDto> searchUserComment(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NullPointerException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다."));
 
         List<Comment> commentList = user.getCommentList();
 
@@ -88,22 +85,19 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, AuthUser authUser) {
+    public void updateComment(Long commentId, CommentRequestDto requestDto, AuthUser authUser) {
         Comment comment = searchComment(commentId);
 
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
 
         if(!Objects.equals(comment.getUser().getId(), user.getId())){
-            throw new IllegalArgumentException("댓글 수정 권한이 업습니다.");
+            throw new UnauthorizedAccessException("댓글 수정 권한이 없습니다.");
         }
-
         comment.update(requestDto.getContent());
-
-        return new CommentResponseDto(comment);
     }
 
     @Transactional
-    public ResponseEntity<String> deleteComment(Long commentId, AuthUser authUser) {
+    public void deleteComment(Long commentId, AuthUser authUser) {
         Comment comment = searchComment(commentId);
 
         Post post = searchPost(comment.getPost().getId());
@@ -111,18 +105,16 @@ public class CommentService {
         User user = comment.getUser();
 
         if(!Objects.equals(user.getId(), authUser.getUserId())){
-            return ResponseEntity.badRequest().body("댓글 수정 권한이 업습니다.");
+            throw new UnauthorizedAccessException("댓글 삭제 권한이 없습니다.");
         }
 
         commentRepository.delete(comment);
 
         post.decraseCommentCount();
-
-        return ResponseEntity.ok("댓글이 성공적으로 삭제됐습니다.");
     }
 
     @Transactional
-    public ResponseEntity<String> reportComment(Long commentId, AuthUser authUser, CommentRequestDto requestDto) {
+    public String reportComment(Long commentId, AuthUser authUser, CommentRequestDto requestDto) {
         Comment comment = searchComment(commentId);
 
         User user = userRepository.findById(authUser.getUserId()).orElseThrow();
@@ -132,7 +124,7 @@ public class CommentService {
         if(reportList != null){
             for (Report report : reportList) {
                 if(report.getUser().getId().equals(authUser.getUserId())){
-                    return ResponseEntity.badRequest().body("이미 해당 댓글을 신고하셨습니다.");
+                    throw new EntityAlreadyExistsException("이미 해당 댓글을 신고 하셨습니다.");
                 }
             }
         }
@@ -148,21 +140,21 @@ public class CommentService {
 
         if(comment.getReportList().size() >= 3){
             reportService.commentBlind(comment);
-            return ResponseEntity.ok("신고 누적으로 해당 댓글이 블라인드 처리됐습니다.");
+            return "신고 누적으로 해당 댓글이 블라인드 처리 되었습니다.";
         }else{
-            return ResponseEntity.ok("댓글 신고 완료.");
+            return "댓글 신고가 완료 되었습니다.";
         }
     }
 
     // 댓글 조회
     public Comment searchComment(Long commentId){
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new NullPointerException("해당 댓글이 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당 댓글이 없습니다."));
     }
 
     // 게시글 조회
     public Post searchPost(Long postId){
-        return postRepository.findById(postId).orElseThrow(() -> new NullPointerException("해당 게시글이 없습니다."));
+        return postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("해당 게시글이 없습니다."));
     }
 
     // Entity -> Dto 변환

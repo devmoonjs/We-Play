@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
 import newsfeed.weplay.domain.comment.dto.request.CommentRequestDto;
 import newsfeed.weplay.domain.comment.dto.request.CommentSaveRequestDto;
-import newsfeed.weplay.domain.comment.dto.response.CommentResponseDto;
-import newsfeed.weplay.domain.comment.dto.response.CommentSaveResponseDto;
 import newsfeed.weplay.domain.comment.dto.response.CommentSearchResponseDto;
 import newsfeed.weplay.domain.comment.service.CommentService;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
@@ -22,9 +20,10 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommentSaveResponseDto> postComment(@PathVariable Long postId
+    public ResponseEntity<String> postComment(@PathVariable Long postId
             , @RequestBody CommentSaveRequestDto requestDto, @Auth AuthUser authUser) {
-        return ResponseEntity.ok(commentService.postComment(postId, requestDto, authUser));
+        commentService.postComment(postId, requestDto, authUser);
+        return ResponseEntity.ok().body("댓글이 작성 되었습니다.");
     }
 
     @GetMapping("/posts/{postId}/comments")
@@ -38,18 +37,20 @@ public class CommentController {
     }
 
     @PutMapping("/comments/{commentId}")
-    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId
+    public ResponseEntity<String> updateComment(@PathVariable Long commentId
             , @RequestBody CommentRequestDto requestDto, @Auth AuthUser authUser) {
-        return ResponseEntity.ok(commentService.updateComment(commentId, requestDto, authUser));
+        commentService.updateComment(commentId, requestDto, authUser);
+        return ResponseEntity.ok().body("댓글이 수정 되었습니다.");
     }
 
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId, @Auth AuthUser authUser) {
-        return commentService.deleteComment(commentId, authUser);
+        commentService.deleteComment(commentId, authUser);
+        return ResponseEntity.ok().body("댓글이 삭제 되었습니다.");
     }
 
     @GetMapping("/comments/{commentId}/reports")
     public ResponseEntity<String> reportComment(@PathVariable Long commentId, @Auth AuthUser authUser, @RequestBody CommentRequestDto requestDto){
-        return commentService.reportComment(commentId, authUser, requestDto);
+        return ResponseEntity.ok().body(commentService.reportComment(commentId, authUser, requestDto));
     }
 }

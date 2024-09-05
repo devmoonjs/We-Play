@@ -27,4 +27,9 @@ public class GlobalException {
     public ResponseEntity<String> handlerDeletePostException(DeletePostException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<String> handlerUnauthorizedAccessExceptionn(UnauthorizedAccessException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
 }
