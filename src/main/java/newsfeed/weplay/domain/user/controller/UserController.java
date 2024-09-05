@@ -32,14 +32,14 @@ public class UserController {
     public ResponseEntity<String> updateUserProfile(@Auth AuthUser authUser,
                                                     @Valid @RequestBody UpdateProfileRequestDto requestDto) {
         userService.updateUserProfile(authUser, requestDto);
-        return new ResponseEntity<>("update success", HttpStatus.OK);
+        return new ResponseEntity<>("업데이트가 완료되었습니다.", HttpStatus.OK);
     }
 
     // 유저 탈퇴
     @PostMapping("")
     public ResponseEntity<String> deleteUser(@Auth AuthUser authUser, @Valid @RequestBody DeleteUserRequestDto requestDto) {
         userService.deleteUser(authUser, requestDto);
-        return new ResponseEntity<>("delete success", HttpStatus.OK);
+        return new ResponseEntity<>("유저가 탈퇴 되었습니다.", HttpStatus.OK);
     }
 
     // 유저 알림 조회
