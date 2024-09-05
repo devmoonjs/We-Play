@@ -1,5 +1,5 @@
 
-<div align="center"><h1><img src="images/we_play로고.png" alt="로고" width="70"/><br>
+<div align="center"><h1><img src="images/we_play로고.png" alt="로고" width="100"/><br>
  We - Play <br><font size="4">빠르게 만나는 소모임 동아리</font></h1></div>
 
 <h2>구현한 기능</h2>
