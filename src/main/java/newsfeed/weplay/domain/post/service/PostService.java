@@ -35,43 +35,33 @@ public class PostService {
 
     // 뉴스피드 조회 (모든 게시물을 최신순으로 조회)
     public Page<PostResponseDto> getNewsFeed(AuthUser authUser, int page, int size) {
-        // 본인
-        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
 
-        // 개인 게시글
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow();
         List<Post> posts = postRepository.findPostsByUser(user);
 
-        // 본인 친구 목록
         List<Friend> friendList = friendRepository.findFriendsByUserAndFriendStatus(user, FriendStatusEnum.ACCEPT);
 
-        // 뉴스피드 Posts
         List<Post> feedPosts = new ArrayList<>(posts);
 
-        // 모든 친구에 대한 반복을 통해 게시글 가져오기
         for (Friend friend : friendList) {
-            log.info("friendId = {} ", friend.getFriendUser().getId());
-
-            // 친구 1명에 대한 게시글 리스트
             List<Post> friendPost = postRepository.findPostsByUser(friend.getFriendUser());
-            // allPosts 에 담기
             feedPosts.addAll(friendPost);
         }
-        List<PostResponseDto> dtos = new ArrayList<>();
 
-        for (Post post : feedPosts) {
-            dtos.add(new PostResponseDto(post));
-        }
+        List<PostResponseDto> feeds = new ArrayList<>(feedPosts.stream()
+                .map(PostResponseDto::new).toList());
 
-        // createdAt을 기준으로 내림차순 정렬
-        dtos.sort((dto1, dto2) -> dto2.getCreatedAt().compareTo(dto1.getCreatedAt()));
+        feeds.sort((dto1, dto2) -> dto2.getCreatedAt().compareTo(dto1.getCreatedAt()));
 
+        return pagingFeeds(page, size, feeds);
+    }
+
+    private static Page<PostResponseDto> pagingFeeds(int page, int size, List<PostResponseDto> feeds) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()), dtos.size());
-        Page<PostResponseDto> result = new PageImpl<>(dtos.subList(start, end), pageRequest, dtos.size());
-
-        return result;
+        int end = Math.min((start + pageRequest.getPageSize()), feeds.size());
+        return new PageImpl<>(feeds.subList(start, end), pageRequest, feeds.size());
     }
 
     public Page<PostResponseDto> getAllPosts(int page, int size) {

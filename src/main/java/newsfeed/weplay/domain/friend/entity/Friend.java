@@ -30,7 +30,7 @@ public class Friend {
         this.friendStatus = FriendStatusEnum.REQUESTING;
     }
 
-    public void setFriendStatus(FriendStatusEnum statusEnum) {
+    public void changeFriendStatus(FriendStatusEnum statusEnum) {
         this.friendStatus = statusEnum;
     }
 }
