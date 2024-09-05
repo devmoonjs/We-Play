@@ -2,6 +2,7 @@ package newsfeed.weplay.domain.post.controller;
 
 import lombok.RequiredArgsConstructor;
 import newsfeed.weplay.domain.auth.dto.AuthUser;
+import newsfeed.weplay.domain.exception.EntityNotFoundException;
 import newsfeed.weplay.domain.filter.annotaion.Auth;
 import newsfeed.weplay.domain.post.dto.PostRequestDto;
 import newsfeed.weplay.domain.post.dto.PostResponseDto;
@@ -55,14 +56,14 @@ public class PostController {
             PostResponseDto updatedPost = postService.updatePost(authUser, id, postRequestDto);
             return new ResponseEntity<>(updatedPost, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new EntityNotFoundException("해당 게시글이 존재하지 않습니다.");
         }
     }
 
     // 게시물 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@Auth AuthUser authUser, @PathVariable Long id) {
+    public ResponseEntity<String> deletePost(@Auth AuthUser authUser, @PathVariable Long id) {
         postService.deletePost(authUser, id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().body("게시글이 삭제되었습니다.");
     }
 }
