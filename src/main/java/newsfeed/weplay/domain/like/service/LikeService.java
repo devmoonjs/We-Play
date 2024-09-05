@@ -31,10 +31,10 @@ public class LikeService {
         User user = userRepository.findById(authUser.getUserId()).orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재 하지 않습니다."));
         Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("해당 게시글이 존재하지 않습니다."));
 
-        //게시글의 유저가 있는지 확인 그리고 해당게시글의 유저id와 좋아요 하려는 유저가 같은 사람인지 확인하는 조건문
+        //게시글의 유저가 있는지 확인 해당게시글의 유저id와 좋아요 하려는 유저가 같은 사람인지 확인하는 조건문
         if (post.getUser() != null && ObjectUtils.nullSafeEquals(user.getId(), post.getUser().getId())) {
             throw new EntityAlreadyExistsException("자신이 작성한 게시글에는 좋아요를 누를 수 없습니다.");
-        }//같은사람이 아니라면 like를 저장
+        }//같은사람이 아니라면 like를 저장 진행
 
         if (likesRepository.findByUserAndPost(user, post).isPresent()) {
             throw new EntityAlreadyExistsException("이미 좋아요한 게시글 입니다.");
@@ -64,7 +64,7 @@ public class LikeService {
 
         if (comment.getUser() != null && ObjectUtils.nullSafeEquals(user.getId(), comment.getUser().getId())) {
             throw new EntityAlreadyExistsException("자신이 작성한 댓글에는 좋아요를 누를 수 없습니다.");
-        }//같은사람이 아니라면 like를 저장
+        }
 
         if (likesRepository.findByUserAndComment(user, comment).isPresent()) {
             throw new EntityAlreadyExistsException("이미 좋아요한 댓글 입니다.");
@@ -78,10 +78,10 @@ public class LikeService {
     public void deleteLikeComment(Long commentId, AuthUser authUser) {
         //댓글이 있는지 확인
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("해당 댓글이 존재하지 않습니다."));
-        //유저 id 확인
+        //해당 유저 확인을 위한 user 생성
         User user = userRepository.findById(authUser.getUserId()).orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재 하지 않습니다."));
         //유저와 게시글 확인해서 해당 유저가 좋아요했는지 확인
-        Likes like = likesRepository.findByUserAndComment(user, comment).orElseThrow(() -> new EntityNotFoundException("없앨 좋아요가 없습니다."));
+        Likes like = likesRepository.findByUserAndComment(user, comment).orElseThrow(() -> new EntityNotFoundException("좋아요를 하지 않았습니다."));
 
         likesRepository.delete(like);
         comment.decreaseLikeCount();
