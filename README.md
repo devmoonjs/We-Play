@@ -116,7 +116,7 @@
 
 | 기능           | URL                                | Method | Request Header           | Request Body            | Response Header | Response                                      |
 |--------------|------------------------------------|--------|--------------------------|-------------------------|-----------------|-----------------------------------------------|
-| 친구 요청        | `/api/friends/reques/{friendId}`   | POST   | Authorization: jwt-token | { "friend_user_id": 2 } | N/A             | { "success" }                                 |
+| 친구 요청        | `/api/friends/requests/{friendId}` | POST   | Authorization: jwt-token | { "friend_user_id": 2 } | N/A             | { "success" }                                 |
 | 친구 요청 리스트 조회 | `/api/friends/requests`            | POST   | Authorization: jwt-token | N/A                     | N/A             | { "userName": "user1", ""userName": "user2" } |
 | 친구 요청 상태 변경  | `/api/friends/{status}/{friendId}` | POST   | Authorization: jwt-token | N/A                     | N/A             | { "success" }                                 |
 | 친구 삭제        | `/api/friends/{friendId}`          | POST   | Authorization: jwt-token | N/A                     | N/A             | { "success." }                                |
